@@ -1,0 +1,3139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3f7d5b">
+<title>自律人格 · Identity Lv</title>
+<style>
+/* ============ 基础 ============ */
+:root{
+  --bg:#f3f6f1;
+  --surface:#ffffff;
+  --surface-soft:#f7faf6;
+  --line:#e2e9df;
+  --line-strong:#d3dfd1;
+  --text:#22312a;
+  --text-2:#3d4d43;
+  --muted:#77877b;
+  --muted-2:#9baaa0;
+  --green:#3f7d5b;
+  --green-deep:#2c5d44;
+  --green-mid:#6ca282;
+  --green-soft:#e3efe4;
+  --green-tint:#f0f6ef;
+  --terra:#a55f45;
+  --terra-soft:#f7ece6;
+  --amber:#a8823c;
+  --amber-soft:#f7f0df;
+  --teal:#4c7d78;
+  --teal-soft:#e8f2f0;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow-sm:0 1px 2px rgba(34,49,42,.04);
+  --shadow:0 18px 40px -28px rgba(34,49,42,.35);
+  --sidebar:228px;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:
+    radial-gradient(1000px 420px at 85% -8%, #eaf2e6 0%, rgba(234,242,230,0) 62%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.55;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body.lock{overflow:hidden}
+button{font-family:inherit;font-size:inherit;color:inherit;border:none;background:none;padding:0;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+h1,h2,h3,h4,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+svg{display:block}
+::selection{background:#cfe4d3;color:var(--green-deep)}
+:focus-visible{outline:2px solid rgba(63,125,91,.45);outline-offset:2px}
+
+/* ============ 布局 ============ */
+.app{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;padding:26px 18px 22px;
+  display:flex;flex-direction:column;gap:26px;
+  border-right:1px solid var(--line);
+  background:rgba(247,250,246,.72);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:20;
+}
+.main-wrap{min-width:0;display:flex;flex-direction:column}
+.main{min-width:0;padding:34px 42px 72px;display:flex;justify-content:center}
+.page{width:100%;max-width:1120px;min-width:0}
+.mobile-top{display:none}
+.bottom-nav{display:none}
+
+/* 品牌 */
+.brand{display:flex;align-items:center;gap:11px;padding:2px 8px}
+.logo{
+  width:36px;height:36px;border-radius:12px;background:var(--green);
+  display:grid;place-items:center;color:#fff;box-shadow:0 6px 14px -8px rgba(44,93,68,.75);
+  flex:0 0 auto;
+}
+.brand-name{font-size:17px;font-weight:650;letter-spacing:3px;line-height:1.2;color:var(--green-deep)}
+.brand-sub{font-size:10px;letter-spacing:1.6px;color:var(--muted-2);margin-top:2px}
+
+/* 侧栏导航 */
+.side-nav{display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  height:44px;padding:0 13px;border-radius:12px;
+  color:var(--muted);font-size:14px;font-weight:500;
+  transition:background .18s,color .18s;
+  position:relative;text-align:left;width:100%;
+}
+.nav-item svg{flex:0 0 auto;opacity:.9}
+.nav-item:hover{background:rgba(63,125,91,.07);color:var(--text-2)}
+.nav-item.active{background:var(--green-soft);color:var(--green-deep);font-weight:650}
+.nav-item.active::after{
+  content:"";width:4px;height:4px;border-radius:50%;background:var(--green);
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+.points-card{
+  background:var(--green-tint);border:1px solid #dfeade;border-radius:16px;
+  padding:14px 15px 13px;
+}
+.points-card .pc-label{font-size:11px;color:var(--muted);letter-spacing:.5px}
+.points-card .pc-value{display:flex;align-items:baseline;gap:4px;margin-top:1px}
+.points-card .pc-value b{font-size:24px;font-weight:650;color:var(--green-deep);letter-spacing:-.5px}
+.points-card .pc-value span{font-size:11px;color:var(--muted)}
+.points-card .pc-link{
+  margin-top:9px;display:flex;align-items:center;gap:4px;
+  font-size:12px;color:var(--green);font-weight:600;padding:0;
+}
+.points-card .pc-link:hover{color:var(--green-deep)}
+.side-note{font-size:10.5px;color:var(--muted-2);line-height:1.6;padding:0 4px}
+
+/* 移动端顶栏与底栏 */
+.mobile-top{
+  position:sticky;top:0;z-index:30;
+  display:none;align-items:center;justify-content:space-between;
+  padding:12px 18px;background:rgba(247,250,246,.88);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(226,233,223,.8);
+}
+.mobile-brand{display:flex;align-items:center;gap:9px}
+.mobile-brand .logo{width:29px;height:29px;border-radius:9px}
+.mobile-brand b{font-size:15px;letter-spacing:2px;color:var(--green-deep)}
+.mobile-points{
+  display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:6px 11px;font-weight:650;font-size:13px;color:var(--green-deep);
+  box-shadow:var(--shadow-sm);
+}
+.mobile-points span{font-size:10px;color:var(--muted);font-weight:500}
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  display:none;grid-template-columns:repeat(4,1fr);
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:5px 0;border-radius:10px;color:var(--muted);font-size:10.5px;
+  transition:color .16s;
+}
+.bnav-item svg{width:21px;height:21px}
+.bnav-item.active{color:var(--green-deep);font-weight:650}
+
+/* ============ 通用组件 ============ */
+.page-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+  margin-bottom:24px;
+}
+.page-head h1{font-size:26px;font-weight:650;letter-spacing:-.4px;line-height:1.25}
+.page-head .sub{color:var(--muted);font-size:12.5px;margin-top:4px}
+.page-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:38px;padding:0 15px;border-radius:11px;
+  font-size:13px;font-weight:550;white-space:nowrap;
+  transition:background .16s,border-color .16s,color .16s,transform .12s;
+}
+.btn:active{transform:translateY(1px)}
+.btn svg{flex:0 0 auto}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 18px -12px rgba(44,93,68,.8)}
+.btn-primary:hover{background:var(--green-deep)}
+.btn-ghost{background:#fff;border:1px solid var(--line-strong);color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-soft);border-color:#c4d3c2}
+.btn-soft{background:var(--green-soft);color:var(--green-deep)}
+.btn-soft:hover{background:#d8e9da}
+.btn-danger-soft{background:var(--terra-soft);color:var(--terra)}
+.btn-danger-soft:hover{background:#f2e0d7}
+.btn-sm{height:32px;padding:0 11px;font-size:12px;border-radius:9px}
+.btn-lg{height:44px;padding:0 20px;font-size:14px;border-radius:12px}
+.btn-icon{
+  width:34px;height:34px;padding:0;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:background .16s,color .16s;
+}
+.btn-icon:hover{background:var(--green-tint);color:var(--green-deep)}
+.btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);
+}
+.panel{padding:19px 20px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
+.panel-head h3{font-size:14.5px;font-weight:650}
+.panel-head .ph-sub{font-size:11.5px;color:var(--muted-2)}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+.segmented{
+  display:inline-flex;background:var(--green-tint);border:1px solid #e4ece1;
+  border-radius:11px;padding:3px;gap:2px;
+}
+.segmented button{
+  height:30px;padding:0 13px;border-radius:8px;font-size:12.5px;color:var(--muted);
+  font-weight:500;transition:all .16s;white-space:nowrap;
+}
+.segmented button.active{background:#fff;color:var(--green-deep);font-weight:650;box-shadow:0 1px 4px rgba(34,49,42,.1)}
+
+.tag{
+  display:inline-flex;align-items:center;gap:3px;
+  height:21px;padding:0 7px;border-radius:6px;
+  font-size:10.5px;font-weight:500;white-space:nowrap;
+}
+.tag-daily{background:var(--green-tint);color:var(--green)}
+.tag-weekly{background:var(--teal-soft);color:var(--teal)}
+.tag-period{background:var(--amber-soft);color:var(--amber)}
+.tag-muted{background:#f2f5f1;color:var(--muted)}
+.tag-done{background:var(--green-soft);color:var(--green-deep)}
+.tag-miss{background:var(--terra-soft);color:var(--terra)}
+.tag-today{background:var(--green);color:#fff}
+
+.eyebrow{font-size:11px;letter-spacing:1.1px;color:var(--muted-2)}
+
+.input,.textarea{
+  width:100%;background:#fbfdfa;border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;font-size:13px;color:var(--text);
+  transition:border-color .16s,box-shadow .16s,background .16s;
+}
+.input::placeholder,.textarea::placeholder{color:#a8b4aa}
+.input:hover,.textarea:hover{border-color:#cfdacd}
+.input:focus,.textarea:focus{outline:none;border-color:var(--green-mid);background:#fff;box-shadow:0 0 0 3px rgba(63,125,91,.1)}
+.textarea{resize:vertical;line-height:1.7;padding:10px 12px}
+
+.empty{
+  padding:36px 22px;text-align:center;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.empty .empty-ic{
+  width:44px;height:44px;border-radius:14px;background:var(--green-tint);
+  display:grid;place-items:center;color:var(--green-mid);margin-bottom:2px;
+}
+.empty b{font-size:13.5px;color:var(--text-2);font-weight:600}
+.empty p{font-size:12px;max-width:300px}
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted-2)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.legend .l-done{background:var(--green)}
+.legend .l-part{background:var(--green-mid);opacity:.6}
+.legend .l-miss{background:var(--terra)}
+.legend .l-none{background:#dfe7dc}
+.legend .lg-ban{color:var(--terra)}
+
+/* ============ 日程：通用 ============ */
+.cal-page-head{margin-bottom:18px}
+.cal-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:4px 0 14px;
+}
+.cal-title{display:flex;align-items:baseline;gap:9px}
+.cal-title h2{font-size:20px;font-weight:650;letter-spacing:-.2px}
+.cal-title .cal-note{font-size:11.5px;color:var(--muted-2)}
+.cal-nav{display:flex;align-items:center;gap:5px}
+.cal-nav .btn-icon{border:1px solid var(--line);background:#fff;width:32px;height:32px;border-radius:9px}
+.cal-nav .btn-icon:hover{background:var(--green-tint)}
+
+/* 日视图 */
+.day-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  margin-bottom:16px;
+}
+.day-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.day-title h2{font-size:30px;font-weight:650;letter-spacing:-1px;line-height:1.1}
+.day-title .weekday{font-size:13px;color:var(--muted);font-weight:500}
+.day-sub{font-size:11.5px;color:var(--muted-2);margin-top:5px}
+.day-banner{
+  display:flex;align-items:center;gap:16px;padding:15px 18px;
+  border-radius:16px;margin-bottom:18px;
+  background:var(--green-tint);border:1px solid #e1ece0;
+}
+.day-banner.is-done{background:var(--green-soft);border-color:#d6e8d8}
+.day-banner.is-missed{background:var(--terra-soft);border-color:#f0dfd6}
+.day-banner.is-empty{background:var(--surface-soft);border-color:var(--line)}
+.ring{
+  width:58px;height:58px;border-radius:50%;flex:0 0 auto;position:relative;
+  background:conic-gradient(var(--green) calc(var(--p,0) * 1%), #dbe9dc 0);
+  display:grid;place-items:center;
+}
+.ring::before{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
+.ring b{position:relative;z-index:1;font-size:13px;font-weight:650;color:var(--green-deep);letter-spacing:-.2px}
+.day-banner.is-missed .ring{background:conic-gradient(var(--terra) calc(var(--p,0) * 1%), #eddfd8 0)}
+.day-banner.is-empty .ring{background:#e8eee6}
+.day-banner .db-text{flex:1;min-width:0}
+.day-banner .db-title{font-size:14px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.day-banner .db-desc{font-size:11.5px;color:var(--muted);margin-top:2px}
+.day-banner .db-flag{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:9px;
+  background:rgba(255,255,255,.7);font-size:11px;color:var(--amber);white-space:nowrap;
+}
+.day-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:16px;align-items:start}
+.ban-strip{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--terra-soft);border:1px solid #eed9cf;border-radius:14px;padding:11px 15px;margin-bottom:16px}
+.ban-head{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--terra);font-weight:600;flex:0 0 auto}
+.ban-items{display:flex;flex-wrap:wrap;gap:8px}
+.ban-item{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #eed9cf;border-radius:20px;padding:4px 10px;font-size:11px;color:var(--terra)}
+.ban-item b{font-weight:600}
+.ban-item em{font-style:normal;font-size:9.5px;color:var(--muted-2)}
+.tasks-panel{padding-bottom:8px}
+.day-group{padding-top:12px}
+.day-group + .day-group{border-top:1px solid #f0f4ee;margin-top:4px}
+.day-group-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:4px 2px 7px;
+}
+.day-group-name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--text-2);min-width:0}
+.day-group-name .dg-date{font-size:10.5px;color:var(--muted-2);font-weight:400}
+.day-group-count{font-size:10.5px;color:var(--muted-2);white-space:nowrap}
+
+.trow{
+  display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;
+  padding:11px 4px 11px 2px;align-items:flex-start;
+  border-radius:10px;position:relative;
+}
+.trow + .trow{border-top:1px solid #f2f6f0}
+.trow:hover{background:#fbfdfa}
+.check{
+  width:22px;height:22px;border-radius:50%;border:1.5px solid #c9d7c7;background:#fff;
+  margin-top:1px;display:grid;place-items:center;color:transparent;
+  transition:all .16s;flex:0 0 auto;
+}
+.check svg{width:12px;height:12px;stroke-width:2.2}
+.check:hover{border-color:var(--green-mid);background:var(--green-tint)}
+.check.checked{background:var(--green);border-color:var(--green);color:#fff}
+.check.checked:hover{background:var(--green-deep);border-color:var(--green-deep)}
+.check.disabled{opacity:.45;cursor:not-allowed}
+.t-main{min-width:0}
+.t-name{font-size:14px;font-weight:500;line-height:1.45;display:flex;align-items:center;gap:6px;flex-wrap:wrap;word-break:break-word}
+.trow.done .t-name{color:var(--muted);text-decoration:line-through;text-decoration-color:#b9c8b9;text-decoration-thickness:1px}
+.t-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.t-sub{font-size:11.5px;margin-top:4px;line-height:1.6;word-break:break-word}
+.t-sub.reward{color:var(--green)}
+.t-sub.penalty{color:var(--terra)}
+.t-sub.muted{color:var(--muted-2)}
+.t-side{display:flex;align-items:center;gap:4px;padding-top:1px}
+.pts-badge{
+  font-size:10.5px;font-weight:600;color:var(--green);background:var(--green-tint);
+  border-radius:6px;padding:2px 6px;white-space:nowrap;
+}
+.pts-badge.zero{display:none}
+.t-remove{
+  width:23px;height:23px;border-radius:6px;display:grid;place-items:center;
+  color:#b6c2b7;opacity:0;transition:opacity .14s,background .14s,color .14s;
+}
+.trow:hover .t-remove{opacity:1}
+.t-remove:hover{background:var(--terra-soft);color:var(--terra)}
+@media (hover:none){.t-remove{opacity:.65}}
+
+.extra-add{margin:10px 2px 2px;padding-top:12px;border-top:1px dashed #e3ebe1}
+.extra-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.extra-form .input{flex:1;min-width:140px;height:36px;padding:7px 10px}
+.extra-form .hours{width:92px;flex:0 0 auto}
+.extra-form .unit{font-size:11px;color:var(--muted-2);margin-left:-3px}
+.extra-form .btn{height:36px;flex:0 0 auto}
+
+/* 日记 */
+.journal-panel{position:sticky;top:24px}
+.journal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.journal-head h3{font-size:14.5px;font-weight:650;display:flex;align-items:center;gap:7px}
+.journal-head .save-state{font-size:10.5px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.journal-area{
+  width:100%;min-height:230px;border:none;background:transparent;resize:vertical;
+  font-size:13.5px;line-height:1.9;color:var(--text-2);padding:0;
+  background-image:repeating-linear-gradient(transparent,transparent 25px,#eef3ec 26px);
+  background-attachment:local;
+}
+.journal-area::placeholder{color:#abb7ac}
+.journal-area:focus{outline:none}
+.journal-foot{display:flex;align-items:center;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid #f0f4ee;font-size:10.5px;color:var(--muted-2)}
+
+/* ============ 月视图 ============ */
+.month-card{padding:18px 20px 16px}
+.month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.week-head{
+  text-align:center;font-size:10.5px;color:var(--muted-2);padding:2px 0 8px;letter-spacing:.5px;
+}
+.mcell{
+  position:relative;min-height:86px;border-radius:12px;border:1px solid #eef3ec;
+  background:#fbfdfa;padding:8px 9px;text-align:left;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:border-color .15s,background .15s,transform .12s;
+  overflow:hidden;
+}
+.mcell:hover{border-color:#cbdac9;transform:translateY(-1px)}
+.mcell.out{opacity:.36;background:#f6f9f4}
+.mcell.done{background:var(--green-soft);border-color:#d8e8d9}
+.mcell.partial{background:#f1f8f1;border-color:#e2ede1}
+.mcell.missed{background:var(--terra-soft);border-color:#f0e0d8}
+.mcell.today{box-shadow:inset 0 0 0 1.6px var(--green)}
+.mcell .dnum{font-size:12.5px;font-weight:550;color:var(--text-2);font-variant-numeric:tabular-nums}
+.mcell.out .dnum{color:var(--muted-2)}
+.mcell.today .dnum{color:var(--green-deep);font-weight:700}
+.mcell .mflag{position:absolute;top:7px;right:7px;color:var(--amber);opacity:.95}
+.mcell .mban{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:9px;line-height:1.4;color:var(--terra);background:#fff;border:1px solid #eed9cf;border-radius:5px;padding:1px 5px}
+.mcell .mstatus{display:flex;align-items:flex-end;justify-content:space-between;gap:4px}
+.mcell .mfrac{font-size:9.5px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.mcell.done .mfrac{color:var(--green)}
+.mcell.missed .mfrac{color:var(--terra)}
+.mdot{width:7px;height:7px;border-radius:50%;background:#dfe7dc;flex:0 0 auto;display:inline-block}
+.mdot.done{background:var(--green)}
+.mdot.partial{background:conic-gradient(var(--green) 50%,#dce9dd 0)}
+.mdot.missed{background:var(--terra)}
+.mdot.pending,.mdot.future{background:#fff;border:1.5px solid #cfdccc}
+.month-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap}
+.month-summary{font-size:11.5px;color:var(--muted)}
+.month-summary b{color:var(--text-2);font-weight:600}
+
+/* ============ 年视图 ============ */
+.year-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.mini-month{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 13px 12px;box-shadow:var(--shadow-sm)}
+.mini-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mini-head button{font-size:12.5px;font-weight:600;color:var(--text-2);padding:0}
+.mini-head button:hover{color:var(--green-deep)}
+.mini-head span{font-size:10px;color:var(--muted-2)}
+.mini-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.mini-grid .wh{font-size:8px;text-align:center;color:#b2beb3;line-height:14px}
+.mini-cell{
+  position:relative;aspect-ratio:1;border-radius:4px;background:#f2f6f0;
+  font-size:0;transition:transform .1s;
+}
+.mini-cell.none{background:#f6f9f4}
+.mini-cell.done{background:var(--green)}
+.mini-cell.partial{background:#b7d0ba}
+.mini-cell.missed{background:#e6c7b8}
+.mini-cell.future{background:#eef3ec}
+.mini-cell.today{box-shadow:inset 0 0 0 1.4px var(--green-deep)}
+.mini-cell:hover{transform:scale(1.18)}
+.mini-cell .mflag{position:absolute;top:-2px;right:-2px;width:7px;height:7px;color:var(--amber)}
+.mini-cell .mflag svg{width:7px;height:7px}
+.year-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;flex-wrap:wrap}
+
+/* ============ 规划 ============ */
+.plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.plan-card{padding:20px;cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .16s}
+.plan-card:hover{border-color:#cfdccc;box-shadow:var(--shadow);transform:translateY(-1px)}
+.plan-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.plan-card h3{font-size:16px;font-weight:650;line-height:1.35;word-break:break-word}
+.plan-range{font-size:11px;color:var(--muted-2);margin-top:3px;font-variant-numeric:tabular-nums}
+.plan-status{
+  font-size:10px;padding:3px 7px;border-radius:6px;background:var(--green-tint);color:var(--green);
+  font-weight:600;white-space:nowrap;flex:0 0 auto;
+}
+.plan-status.ended{background:#f2f5f1;color:var(--muted)}
+.plan-status.archived{background:#f2f5f1;color:var(--muted-2)}
+.plan-status.future{background:var(--amber-soft);color:var(--amber)}
+.plan-mini-stats{display:flex;gap:18px;margin-top:15px}
+.plan-mini-stats div{display:flex;flex-direction:column;gap:1px}
+.plan-mini-stats b{font-size:17px;font-weight:650;color:var(--text);letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.plan-mini-stats span{font-size:10px;color:var(--muted-2)}
+.plan-task-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.plan-chip{
+  display:inline-flex;align-items:center;gap:5px;max-width:100%;
+  background:var(--surface-soft);border:1px solid #edf2eb;border-radius:7px;
+  padding:3px 7px;font-size:10.5px;color:var(--text-2);
+}
+.plan-chip i{width:5px;height:5px;border-radius:50%;background:var(--green);flex:0 0 auto}
+.plan-chip.period i{background:var(--amber)}
+.plan-chip.weekly i{background:var(--teal)}
+.plan-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-chip.more{color:var(--muted-2);background:transparent;border-style:dashed}
+.plan-card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #f1f5ef}
+.plan-card-foot .today-state{font-size:10.5px;color:var(--muted-2)}
+.plan-card-foot .ico-actions{display:flex;gap:2px}
+.archived-wrap{margin-top:28px}
+.archived-wrap summary{
+  cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--muted);padding:6px 0;user-select:none;
+}
+.archived-wrap summary::-webkit-details-marker{display:none}
+.archived-wrap summary:hover{color:var(--text-2)}
+.archived-wrap .arch-count{font-size:10px;background:#eef3ec;color:var(--muted-2);border-radius:99px;padding:1px 6px}
+.archived-wrap .plan-grid{margin-top:12px}
+.archived-wrap .plan-card{background:#fbfdfa}
+
+/* 规划详情 */
+.detail-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.detail-hero h2{font-size:22px;font-weight:650;letter-spacing:-.3px}
+.detail-hero .sub{font-size:11.5px;color:var(--muted);margin-top:4px}
+.detail-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 18px}
+.detail-stat{background:var(--green-tint);border-radius:11px;padding:10px 11px}
+.detail-stat b{display:block;font-size:19px;font-weight:650;color:var(--green-deep);font-variant-numeric:tabular-nums;line-height:1.3}
+.detail-stat span{font-size:10px;color:var(--muted)}
+.detail-section-title{font-size:11.5px;color:var(--muted-2);letter-spacing:.5px;margin:16px 0 8px}
+.detail-task{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #f1f5ef}
+.detail-task:first-of-type{border-top:none}
+.detail-task .dt-main{min-width:0}
+.detail-task .dt-name{font-size:13px;font-weight:550;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.detail-task .dt-sub{font-size:10.5px;color:var(--muted-2);margin-top:3px}
+.detail-task .dt-metrics{display:flex;gap:12px;flex:0 0 auto;padding-top:2px}
+.detail-task .dt-metrics span{font-size:10px;color:var(--muted-2);text-align:right;line-height:1.35}
+.detail-task .dt-metrics b{display:block;font-size:12.5px;color:var(--text-2);font-weight:600}
+
+/* ============ 回顾 ============ */
+.review-scope{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.review-scope::-webkit-scrollbar{display:none}
+.scope-chip{
+  height:32px;padding:0 12px;border-radius:9px;border:1px solid var(--line);
+  background:#fff;color:var(--muted);font-size:12px;white-space:nowrap;transition:all .15s;
+  display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;
+}
+.scope-chip:hover{border-color:#cbd9c9;color:var(--text-2)}
+.scope-chip.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:550}
+.review-hero{background:var(--green-tint);border:1px solid #dfeade;border-radius:var(--radius);padding:19px 21px;margin-top:8px}
+.review-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.review-hero h2{font-size:18px;font-weight:650;letter-spacing:-.2px}
+.review-hero .rh-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.review-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.review-stat{background:rgba(255,255,255,.68);border-radius:11px;padding:10px 12px}
+.review-stat b{display:block;font-size:22px;font-weight:650;color:var(--green-deep);letter-spacing:-.5px;line-height:1.25;font-variant-numeric:tabular-nums}
+.review-stat span{font-size:10px;color:var(--muted)}
+.review-body{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
+.review-panel{padding:18px 20px}
+.stat-table-head{display:grid;grid-template-columns:minmax(0,1fr) 68px 68px 68px;gap:8px;padding:9px 0 7px;border-bottom:1px solid #f0f4ee}
+.stat-table-head span{font-size:10px;color:var(--muted-2);text-align:right}
+.stat-table-head span:first-child{text-align:left}
+.stat-group{margin-top:13px}
+.stat-group-title{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text-2);padding:2px 0 5px}
+.stat-group-title .sgt-date{font-size:10px;color:var(--muted-2);font-weight:400}
+.stat-row{display:grid;grid-template-columns:minmax(0,1fr) 68px 68px 68px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid #f4f7f2}
+.stat-row:first-of-type{border-top:none}
+.sr-name{min-width:0}
+.sr-name .srn-main{font-size:12.5px;font-weight:550;display:flex;align-items:center;gap:6px;flex-wrap:wrap;word-break:break-word}
+.sr-name .srn-sub{font-size:10px;color:var(--muted-2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr-num{text-align:right;font-size:13.5px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
+.sr-num.clickable{cursor:pointer;border-radius:6px;padding:3px 5px;margin:-3px -5px;transition:background .15s,color .15s}
+.sr-num.clickable:hover,.sr-num.clickable:focus-visible{background:var(--green-soft);color:var(--green-deep);outline:none}
+.sr-num small{font-size:9.5px;color:var(--muted-2);font-weight:400;margin-left:1px}
+.sr-num.zero{color:#c3cec4;font-weight:400}
+.journal-mini{display:flex;gap:11px;padding:11px 0;border-top:1px solid #f4f7f2}
+.journal-mini:first-of-type{border-top:none}
+.jm-date{flex:0 0 42px;text-align:center}
+.jm-date b{display:block;font-size:16px;font-weight:650;color:var(--green-deep);line-height:1.2;font-variant-numeric:tabular-nums}
+.jm-date span{font-size:9px;color:var(--muted-2)}
+.jm-text{font-size:12px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word;min-width:0}
+.jm-text.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.saved-section{margin-top:26px}
+.saved-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.saved-head h2{font-size:15px;font-weight:650}
+.saved-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.saved-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:#fff;border:1px solid var(--line);border-radius:12px;transition:border-color .15s}
+.saved-card:hover{border-color:#cfdccc}
+.saved-card .sc-main{min-width:0;cursor:pointer}
+.saved-card .sc-title{font-size:12.5px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-card .sc-sub{font-size:10px;color:var(--muted-2);margin-top:2px}
+.saved-card .sc-actions{display:flex;gap:2px;flex:0 0 auto}
+.saved-report-head{border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:13px}
+.saved-report-head h3{font-size:19px;font-weight:650}
+.saved-report-head p{font-size:11px;color:var(--muted-2);margin-top:3px}
+
+/* ============ 商城 ============ */
+.wallet{
+  background:var(--green-deep);color:#fff;border-radius:var(--radius);
+  padding:21px 23px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  position:relative;overflow:hidden;box-shadow:0 20px 38px -28px rgba(44,93,68,.9);
+}
+.wallet::after{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);right:-54px;top:-58px;
+}
+.wallet::before{
+  content:"";position:absolute;width:110px;height:110px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.09);right:-10px;top:-20px;
+}
+.wallet-label{font-size:11px;letter-spacing:.7px;color:rgba(255,255,255,.62)}
+.wallet-value{display:flex;align-items:baseline;gap:6px;margin-top:2px;position:relative;z-index:1}
+.wallet-value b{font-size:38px;font-weight:650;letter-spacing:-1.6px;line-height:1.1;font-variant-numeric:tabular-nums}
+.wallet-value span{font-size:12px;color:rgba(255,255,255,.62)}
+.wallet-note{font-size:11px;color:rgba(255,255,255,.58);margin-top:6px;max-width:340px;line-height:1.6}
+.wallet-mark{position:relative;z-index:1;width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.1);display:grid;place-items:center;color:rgba(255,255,255,.85);flex:0 0 auto}
+.wish-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 11px}
+.wish-head h2{font-size:15px;font-weight:650}
+.wish-head .wh-sub{font-size:10.5px;color:var(--muted-2);margin-top:1px}
+.wish-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wish-card{padding:16px 17px;display:flex;flex-direction:column;gap:10px;position:relative;transition:border-color .15s}
+.wish-card:hover{border-color:#cfdccc}
+.wish-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.wish-name{font-size:14px;font-weight:600;line-height:1.4;word-break:break-word}
+.wish-note{font-size:11px;color:var(--muted-2);margin-top:2px;line-height:1.5;word-break:break-word}
+.wish-del{color:#c0cbc1;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex:0 0 auto;opacity:0;transition:opacity .15s}
+.wish-card:hover .wish-del{opacity:1}
+.wish-del:hover{color:var(--terra);background:var(--terra-soft)}
+.wish-acts{display:flex;gap:2px;flex:0 0 auto}
+.wish-edit{color:#c0cbc1;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex:0 0 auto;opacity:0;transition:opacity .15s}
+.wish-card:hover .wish-edit{opacity:1}
+.wish-edit:hover{color:var(--green);background:var(--green-tint)}
+@media (hover:none){.wish-del{opacity:.55}.wish-edit{opacity:.55}}
+.wish-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:auto}
+.wish-cost{font-size:18px;font-weight:650;color:var(--green-deep);letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.wish-cost small{font-size:10px;color:var(--muted-2);font-weight:400;margin-left:2px}
+.wish-progress{height:4px;background:#edf2eb;border-radius:99px;overflow:hidden;margin-top:4px}
+.wish-progress i{display:block;height:100%;background:var(--green-mid);border-radius:99px}
+.wish-status{font-size:10px;color:var(--muted-2);margin-top:4px}
+.wish-redeemed{background:#fbfdfa}
+.wish-redeemed .wish-name{color:var(--muted)}
+.redeemed-list{display:flex;flex-direction:column;gap:1px}
+.redeemed-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 2px;border-top:1px solid #f1f5ef;font-size:12px}
+.redeemed-row:first-child{border-top:none}
+.redeemed-row .rr-name{color:var(--text-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.redeemed-row .rr-date{font-size:10.5px;color:var(--muted-2);flex:0 0 auto;margin-left:auto}
+.redeemed-row .rr-cost{font-size:12px;color:var(--muted);flex:0 0 auto}
+
+/* ============ 弹窗 ============ */
+.overlay{
+  position:fixed;inset:0;z-index:80;background:rgba(28,42,33,.34);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  animation:fadeIn .16s ease-out;
+}
+.overlay.confirm-layer{z-index:95}
+.modal{
+  width:100%;max-width:520px;max-height:88vh;background:#fff;
+  border-radius:20px;box-shadow:0 30px 70px -20px rgba(24,38,29,.4);
+  display:flex;flex-direction:column;animation:popIn .2s cubic-bezier(.2,.8,.2,1);
+  overflow:hidden;
+}
+.modal.wide{max-width:720px}
+.modal.small{max-width:394px}
+.modal-head{
+  padding:20px 23px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  flex:0 0 auto;
+}
+.modal-head h3{font-size:18px;font-weight:650;letter-spacing:-.2px;line-height:1.35}
+.modal-head p{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+.modal-close{
+  width:31px;height:31px;border-radius:9px;display:grid;place-items:center;
+  color:var(--muted);background:var(--surface-soft);flex:0 0 auto;
+}
+.modal-close:hover{background:#eef4ec;color:var(--text-2)}
+.modal-body{padding:2px 23px 20px;overflow-y:auto;flex:1 1 auto;min-height:0}
+.modal-foot{
+  padding:14px 23px;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#fff;flex:0 0 auto;
+}
+.modal-foot .mf-note{font-size:10.5px;color:var(--muted-2);line-height:1.5}
+.modal-foot .mf-actions{display:flex;gap:8px;margin-left:auto;flex:0 0 auto}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+
+.metric-content{display:flex;align-items:center;gap:10px;background:var(--green-tint);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:2px 0 12px}
+.metric-content span{font-size:10.5px;color:var(--muted);flex:0 0 auto}
+.metric-content b{font-size:13px;font-weight:600;color:var(--text);word-break:break-word}
+.metric-count{font-size:11px;color:var(--muted-2);margin-bottom:6px}
+.metric-count b{color:var(--green-deep);font-size:14px;font-weight:650;margin:0 2px}
+.metric-list{border-top:1px solid #f0f4ee;max-height:300px;overflow-y:auto}
+.metric-event{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid #f4f7f2;font-size:12px}
+.metric-event:last-child{border-bottom:none}
+.metric-event span{color:var(--text-2)}
+.metric-event em{font-style:normal;font-size:10.5px;color:var(--muted-2);flex:0 0 auto}
+.metric-empty{padding:26px 12px;text-align:center;font-size:12px;color:var(--muted-2)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--muted);letter-spacing:.2px}
+.field .hint,
+.hint{font-size:10.5px;color:var(--muted-2);line-height:1.5}
+.field .input{height:38px;padding:8px 11px}
+.range-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-note{
+  margin-top:14px;padding:10px 12px;border-radius:10px;background:var(--green-tint);
+  border:1px solid #e3ece1;font-size:10.5px;color:var(--muted);line-height:1.7;
+}
+.task-editors{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.task-editor{
+  border:1px solid var(--line);border-radius:13px;padding:12px;
+  background:var(--surface-soft);
+}
+.te-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.te-left{display:flex;align-items:center;gap:8px;min-width:0}
+.te-index{
+  width:20px;height:20px;border-radius:6px;background:#fff;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:9.5px;color:var(--muted-2);font-weight:600;flex:0 0 auto;
+}
+.te-seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:8px;padding:2px;gap:1px}
+.te-seg button{height:25px;padding:0 9px;border-radius:6px;font-size:10.5px;color:var(--muted)}
+.te-seg button.active{background:var(--green);color:#fff;font-weight:550}
+.te-seg-inline{align-self:flex-start}
+.te-remove{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;color:#b7c3b8;flex:0 0 auto}
+.te-remove:hover{background:var(--terra-soft);color:var(--terra)}
+.te-name{margin-bottom:8px}
+.te-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.te-grid .te-wide{grid-column:1/-1}
+.te-pair{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.te-grid .input{background:#fff;height:34px;padding:6px 9px;font-size:12px}
+.te-hours-row{display:flex;align-items:center;gap:6px}
+.te-hours-row .input{flex:1;min-width:0}
+.te-pts{font-size:10.5px;color:var(--green);white-space:nowrap;font-weight:600}
+.te-note{font-size:10.5px;color:var(--muted-2);white-space:nowrap}
+.weekday-range{display:flex;align-items:center;gap:8px}
+.weekday-range .input{flex:1;min-width:0}
+.wd-sep{font-size:10.5px;color:var(--muted-2);white-space:nowrap}
+.te-deadline{grid-column:1/-1}
+.add-task-btn{
+  height:38px;border:1px dashed #cfdccb;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:12px;color:var(--muted);background:transparent;transition:all .15s;
+}
+.add-task-btn:hover{border-color:var(--green-mid);color:var(--green);background:var(--green-tint)}
+.form-error{font-size:11px;color:var(--terra);background:var(--terra-soft);padding:7px 10px;border-radius:8px;margin-top:10px;display:none}
+.form-error.show{display:block}
+
+/* toast */
+.toast-root{position:fixed;left:0;right:0;bottom:28px;z-index:120;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 16px}
+.toast{
+  pointer-events:auto;display:flex;align-items:center;gap:10px;
+  background:#24382c;color:#fff;border-radius:11px;padding:10px 15px;
+  font-size:12.5px;box-shadow:0 12px 30px -10px rgba(20,35,25,.6);
+  animation:toastIn .22s cubic-bezier(.2,.8,.2,1);max-width:min(92vw,460px);
+  line-height:1.5;
+}
+.toast.terra{background:#6d3f2e}
+.toast .toast-dot{width:5px;height:5px;border-radius:50%;background:var(--green-mid);flex:0 0 auto}
+.toast.terra .toast-dot{background:#e0a78e}
+.toast.leaving{animation:toastOut .18s ease-in forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(6px)}}
+
+/* misc */
+.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}
+.divider{height:1px;background:#f0f4ee;margin:13px 0}
+.muted-text{color:var(--muted-2);font-size:11px}
+.pill-count{display:inline-flex;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--green-soft);color:var(--green-deep);font-size:10px;align-items:center;justify-content:center;font-weight:600}
+
+/* ============ 响应式 ============ */
+@media (max-width:1080px){
+  .main{padding:30px 28px 64px}
+  .plan-grid{grid-template-columns:1fr}
+  .year-grid{gap:11px}
+}
+@media (max-width:900px){
+  .app{display:block}
+  .sidebar{display:none}
+  .mobile-top{display:flex}
+  .bottom-nav{display:grid}
+  .main{padding:20px 18px calc(92px + env(safe-area-inset-bottom,0px))}
+  .page{max-width:none}
+  .page-head{margin-bottom:18px}
+  .page-head h1{font-size:22px}
+  .page-head .sub{font-size:11.5px}
+  .day-layout{grid-template-columns:1fr}
+  .journal-panel{position:static}
+  .review-body{grid-template-columns:1fr}
+  .month-grid{gap:5px}
+  .mcell{min-height:67px;padding:6px 7px;border-radius:10px}
+  .mcell .dnum{font-size:11.5px}
+  .mcell .mfrac{font-size:8.5px}
+  .year-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wish-grid{grid-template-columns:1fr}
+  .saved-grid{grid-template-columns:1fr}
+  .detail-stats{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .day-title h2{font-size:26px}
+  .day-banner{padding:13px 15px;gap:13px}
+  .ring{width:52px;height:52px}
+  .review-hero{padding:17px}
+  .review-stats{grid-template-columns:repeat(2,1fr)}
+  .overlay{padding:0;align-items:flex-end}
+  .modal,.modal.wide,.modal.small{max-width:none;width:100%;max-height:94vh;border-radius:20px 20px 0 0}
+  .modal-body{padding-bottom:16px}
+  .modal-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .modal-head{padding-top:17px}
+  .toast-root{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:520px){
+  .page-head{align-items:flex-start}
+  .page-actions{gap:6px}
+  .btn{padding:0 12px}
+  .btn-lg{padding:0 16px}
+  .calendar-toolbar{flex-wrap:wrap}
+  .mcell{min-height:58px;padding:5px 6px}
+  .mcell .mfrac{display:none}
+  .week-head{font-size:9.5px}
+  .year-grid{grid-template-columns:1fr}
+  .day-head{flex-direction:column;align-items:flex-start;gap:10px}
+  .day-nav{align-self:flex-end}
+  .stat-table-head,.stat-row{grid-template-columns:minmax(0,1fr) 48px 48px 48px;gap:5px}
+  .stat-table-head span{font-size:9px}
+  .sr-num{font-size:12px}
+  .detail-task{flex-direction:column;gap:5px}
+  .detail-task .dt-metrics{padding-top:0}
+  .te-grid{grid-template-columns:1fr}
+  .range-grid{grid-template-columns:1fr 1fr}
+  .wallet-value b{font-size:34px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo" id="brandLogo"></div>
+      <div>
+        <div class="brand-name">自律人格</div>
+        <div class="brand-sub">Identity Lv</div>
+      </div>
+    </div>
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="side-foot">
+      <div class="points-card">
+        <div class="pc-label">我的积分</div>
+        <div class="pc-value"><b id="sidePoints">0</b><span>积分</span></div>
+        <button class="pc-link" data-tab="store">去商城 <span id="pcArrow"></span></button>
+      </div>
+      <div class="side-note">把日子过成想要的样子</div>
+    </div>
+  </aside>
+  <div class="main-wrap">
+    <header class="mobile-top">
+      <div class="mobile-brand">
+        <div class="logo" id="mobileLogo"></div>
+        <b>自律人格</b>
+      </div>
+      <button class="mobile-points" data-tab="store"><span>积分</span><b id="mobilePoints">0</b></button>
+    </header>
+    <main class="main"><div class="page" id="view"></div></main>
+    <nav class="bottom-nav" id="bottomNav"></nav>
+  </div>
+</div>
+<div id="modal-root"></div>
+<div id="confirm-root"></div>
+<div class="toast-root" id="toastRoot"></div>
+<script>
+/* ============================================================
+   自律人格 · 打卡规划
+   ============================================================ */
+(function(){
+"use strict";
+
+/* ---------------- 基础工具 ---------------- */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const DAY_MS = 86400000;
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function dateKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+function todayKey(){ return dateKey(new Date()); }
+function parseKey(key){
+  const p = String(key||'').split('-').map(Number);
+  return new Date(p[0], (p[1]||1)-1, p[2]||1, 12, 0, 0);
+}
+function parseDateTime(value){
+  if(!value) return null;
+  const m = String(value).match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if(!m) return null;
+  return new Date(+m[1], +m[2]-1, +m[3], +(m[4]||23), +(m[5]||59), 0);
+}
+function addDays(key, n){
+  const d = parseKey(key);
+  d.setDate(d.getDate() + n);
+  return dateKey(d);
+}
+function diffDays(a, b){
+  return Math.round((parseKey(b).getTime() - parseKey(a).getTime()) / DAY_MS);
+}
+function minKey(a, b){ return a <= b ? a : b; }
+function maxKey(a, b){ return a >= b ? a : b; }
+function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(v){
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function isoAt(key, hour=9){
+  const d = parseKey(key);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+}
+function fmtMD(key){ const d = parseKey(key); return (d.getMonth()+1) + '月' + d.getDate() + '日'; }
+function fmtMDShort(key){ const d = parseKey(key); return pad2(d.getMonth()+1) + '.' + pad2(d.getDate()); }
+function fmtRange(a,b){
+  if(!a || !b) return '';
+  return fmtMDShort(a) + ' – ' + fmtMDShort(b);
+}
+function weekdayCN(key){
+  const d = parseKey(key);
+  return '星期' + '日一二三四五六'[d.getDay()];
+}
+function weekdayShort(key){
+  const d = parseKey(key);
+  return '日一二三四五六'[d.getDay()];
+}
+function fmtDateTime(value){
+  const d = parseDateTime(value);
+  if(!d) return '';
+  return (d.getMonth()+1) + '月' + d.getDate() + '日 ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function fmtStamp(iso){
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  return d.getFullYear() + '.' + pad2(d.getMonth()+1) + '.' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function fmtStampShort(iso){
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function fmtHours(h){
+  const n = Number(h||0);
+  if(!n) return '0';
+  return String(Math.round(n*10)/10).replace(/\.0$/,'');
+}
+function pointsForHours(h){
+  const n = Number(h||0);
+  if(!isFinite(n) || n <= 0) return 0;
+  return Math.round(n * 10);
+}
+
+/* ---------------- 图标 ---------------- */
+const ICON_PATHS = {
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 9.5h17"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01"/>',
+  plan: '<rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8.5h8M8 12.5h5"/><path d="m14.5 16.5 1.5 1.5 3-3"/>',
+  review: '<path d="M3.5 5.5c3-1.3 5.8-1.3 8.5.4 2.7-1.7 5.5-1.7 8.5-.4v13c-3-1.3-5.8-1.3-8.5.4-2.7-1.7-5.5-1.7-8.5-.4v-13Z"/><path d="M12 5.9v13"/>',
+  store: '<path d="M5.8 8.5h12.4l1 11.2c.1.8-.5 1.3-1.3 1.3H6.1c-.8 0-1.4-.5-1.3-1.3l1-11.2Z"/><path d="M9 8.5V6.7a3 3 0 0 1 6 0v1.8"/>',
+  leaf: '<path d="M19.5 4c-8.5 0-13.7 3.6-13.7 9.4 0 2.5 1.9 4.4 4.4 4.4 5.8 0 9.3-5.4 9.3-13.8Z"/><path d="M5.5 20c2.8-5.5 6.6-8.6 11.2-10.5"/>',
+  check: '<path d="m5 12.5 4.2 4.2L19 6.8"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  chevronLeft: '<path d="m14.5 6-6 6 6 6"/>',
+  chevronRight: '<path d="m9.5 6 6 6-6 6"/>',
+  edit: '<path d="M4 20h4.2L19 9.2a2.1 2.1 0 0 0-3-3L5.2 17 4 20Z"/><path d="m14.8 5.5 3 3"/>',
+  archive: '<path d="M4 7h16v13H4z"/><path d="M3 4h18v3H3zM9 11h6"/>',
+  download: '<path d="M12 4v10"/><path d="m8 10.5 4 4 4-4"/><path d="M5 19h14"/>',
+  trash: '<path d="M4.5 7h15"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M6.5 7l.8 12.1c.1.8.8 1.4 1.6 1.4h6.2c.8 0 1.5-.6 1.6-1.4L17.5 7"/><path d="M10 11v5M14 11v5"/>',
+  flag: '<path d="M6 21V4.2h9.7l-2.1 4.3 2.1 4.3H6"/>',
+  spark: '<path d="M12 3.5c.6 4.4 3.1 6.9 7.5 7.5-4.4.6-6.9 3.1-7.5 7.5-.6-4.4-3.1-6.9-7.5-7.5 4.4-.6 6.9-3.1 7.5-7.5Z"/>',
+  arrowUpRight: '<path d="M7 17 17 7M8 7h9v9"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  book: '<path d="M4.5 4.5h5A2.5 2.5 0 0 1 12 7v13a2 2 0 0 0-2-2H4.5v-13Z"/><path d="M19.5 4.5h-5A2.5 2.5 0 0 0 12 7v13a2 2 0 0 1 2-2h5.5v-13Z"/>',
+  more: '<path d="M6 12h.01M12 12h.01M18 12h.01"/>',
+  bookmark: '<path d="M6.5 4h11v16l-5.5-3.4L6.5 20V4Z"/>',
+  target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2"/>',
+  ban: '<circle cx="12" cy="12" r="8.5"/><path d="m5.6 18.4 12.8-12.8"/>'
+};
+function icon(name, size=18, cls=''){
+  const p = ICON_PATHS[name] || ICON_PATHS.leaf;
+  return '<svg class="' + cls + '" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+}
+
+/* ---------------- 数据 ---------------- */
+const STORAGE_KEY = 'qinghe_checkin_v3';
+let db = null;
+
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && Array.isArray(parsed.plans)) return normalizeDB(parsed);
+    }
+  }catch(e){ console.warn('读取本地数据失败', e); }
+  return emptyDB();
+}
+function normalizeDB(data){
+  data.plans = Array.isArray(data.plans) ? data.plans : [];
+  data.checkins = data.checkins && typeof data.checkins === 'object' ? data.checkins : {};
+  data.wishes = Array.isArray(data.wishes) ? data.wishes : [];
+  data.redemptions = Array.isArray(data.redemptions) ? data.redemptions : [];
+  data.savedReviews = Array.isArray(data.savedReviews) ? data.savedReviews : [];
+  data.weeklySettlements = Array.isArray(data.weeklySettlements) ? data.weeklySettlements : [];
+  data.meta = data.meta || {version:1};
+  data.plans.forEach(p => {
+    p.tasks = Array.isArray(p.tasks) ? p.tasks : [];
+    p.archivedAt = p.archivedAt || null;
+    p.tasks.forEach(t => {
+      t.mode = (t.mode === 'period' || t.mode === 'weekly') ? t.mode : 'daily';
+      t.estHours = Number(t.estHours) || 0;
+      t.from = t.from || p.start;
+      t.to = t.to || null;
+      t.deadline = t.deadline || '';
+      t.reward = t.reward || '';
+      t.penalty = t.penalty || '';
+      t.penaltyMode = t.penaltyMode === 'ban' ? 'ban' : 'text';
+      t.banStart = t.banStart || '';
+      t.banEnd = t.banEnd || '';
+      t.weeklyTarget = t.mode === 'weekly' ? clamp(Number(t.weeklyTarget)||3, 1, 7) : 0;
+      t.banWeekStart = t.mode === 'weekly' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0;
+      t.banWeekEnd = t.mode === 'weekly' ? clamp(Number(t.banWeekEnd)||3, 1, 7) : 0;
+    });
+  });
+  Object.keys(data.checkins).forEach(k => {
+    const c = data.checkins[k];
+    if(!c || typeof c !== 'object'){ delete data.checkins[k]; return; }
+    c.tasks = c.tasks && typeof c.tasks === 'object' ? c.tasks : {};
+    c.extras = Array.isArray(c.extras) ? c.extras : [];
+    c.removed = Array.isArray(c.removed) ? c.removed : [];
+    c.journal = typeof c.journal === 'string' ? c.journal : '';
+  });
+  return data;
+}
+function saveDB(){
+  syncWeeklySettlements();
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+  catch(e){ toast('本地保存失败，请检查存储空间', 'terra'); }
+}
+function emptyDB(){
+  return {
+    plans: [],
+    checkins: {},
+    wishes: [],
+    redemptions: [],
+    savedReviews: [],
+    weeklySettlements: [],
+    meta: {version: 3}
+  };
+}
+
+/* ---------------- 数据查询 ---------------- */
+function allPlanTasks(){
+  const out = [];
+  db.plans.forEach(plan => plan.tasks.forEach(task => out.push({plan, task})));
+  return out;
+}
+function findPlan(id){ return db.plans.find(p => p.id === id) || null; }
+function findTask(taskId){
+  for(const plan of db.plans){
+    const task = plan.tasks.find(t => t.id === taskId);
+    if(task) return {plan, task};
+  }
+  return null;
+}
+function planEndKey(plan){
+  let end = plan.end;
+  if(plan.archivedAt) end = minKey(end, addDays(plan.archivedAt, -1));
+  return end;
+}
+function taskRange(plan, task){
+  if(!plan || !task) return null;
+  const start = maxKey(task.from || plan.start, plan.start);
+  let end = minKey(task.to || plan.end, plan.end);
+  if(plan.archivedAt) end = minKey(end, addDays(plan.archivedAt, -1));
+  if(task.mode === 'period' && task.deadline) end = minKey(end, task.deadline.slice(0,10));
+  if(start > end) return null;
+  return [start, end];
+}
+function rangeHas(range, key){
+  return !!range && key >= range[0] && key <= range[1];
+}
+function getDay(date){
+  return db.checkins[date] || null;
+}
+function ensureDay(date){
+  if(!db.checkins[date]) db.checkins[date] = { tasks:{}, extras:[], removed:[], journal:'' };
+  const c = db.checkins[date];
+  c.tasks = c.tasks || {};
+  c.extras = c.extras || [];
+  c.removed = c.removed || [];
+  c.journal = c.journal || '';
+  return c;
+}
+function isDayTaskRemoved(date, taskId){
+  const c = db.checkins[date];
+  return !!(c && c.removed && c.removed.includes(taskId));
+}
+function isTaskChecked(date, taskId){
+  const c = db.checkins[date];
+  return !!(c && c.tasks && c.tasks[taskId]);
+}
+function periodCompletion(plan, task){
+  if(!task.deadline) return null;
+  const range = taskRange(plan, task);
+  if(!range) return null;
+  let d = range[0];
+  while(d <= range[1]){
+    const c = db.checkins[d];
+    if(c && c.tasks && c.tasks[task.id]) return {date:d, rec:c.tasks[task.id]};
+    d = addDays(d, 1);
+  }
+  return null;
+}
+const WEEKDAY_NAMES = ['周一','周二','周三','周四','周五','周六','周日'];
+function weekdayIndex(key){ const d = parseKey(key); return d.getDay() || 7; }
+function mondayOf(key){ return addDays(key, -(weekdayIndex(key) - 1)); }
+function weekdaysText(a, b){
+  const s = clamp(Number(a)||1, 1, 7);
+  const e = clamp(Number(b)||3, 1, 7);
+  return WEEKDAY_NAMES[s-1] + '–' + WEEKDAY_NAMES[e-1];
+}
+function weeklyTargetOf(task){ return clamp(Number(task.weeklyTarget)||3, 1, 7); }
+function taskModeLabel(mode){
+  return mode === 'period' ? '节点任务' : mode === 'weekly' ? '周期任务' : '每日任务';
+}
+function taskModeShort(mode){
+  return mode === 'period' ? '节点' : mode === 'weekly' ? '周期' : '每日';
+}
+function taskModeClass(mode){
+  return mode === 'period' ? 'tag-period' : mode === 'weekly' ? 'tag-weekly' : 'tag-daily';
+}
+function weeklyCycleAt(task, date){
+  const anchor = task.from;
+  if(!anchor || date < anchor) return null;
+  const idx = Math.floor(diffDays(anchor, date) / 7);
+  if(idx < 0) return null;
+  const start = addDays(anchor, idx * 7);
+  return {index: idx, start, end: addDays(start, 6)};
+}
+function weeklyCheckedCount(task, start, end){
+  let n = 0, d = start;
+  while(d <= end){
+    if(!isDayTaskRemoved(d, task.id) && isTaskChecked(d, task.id)) n++;
+    d = addDays(d, 1);
+  }
+  return n;
+}
+function weeklySettlementFor(task, cycleStart){
+  return (db.weeklySettlements || []).find(s => s.taskId === task.id && s.cycleStart === cycleStart) || null;
+}
+function weeklyTaskSettlements(planId, taskId){
+  return (db.weeklySettlements || [])
+    .filter(s => s.planId === planId && s.taskId === taskId)
+    .sort((a, b) => a.cycleStart.localeCompare(b.cycleStart));
+}
+function weeklyPenaltyText(task, s){
+  if(task.penaltyMode === 'ban' && s && s.banFrom && s.banTo){
+    return task.penalty + '（' + fmtMD(s.banFrom) + ' – ' + fmtMD(s.banTo) + '）';
+  }
+  return task.penalty || '';
+}
+function nextWeekBanRange(cycleEnd, startDay, endDay){
+  const nextMonday = addDays(mondayOf(cycleEnd), 7);
+  const bs = clamp(Number(startDay)||1, 1, 7);
+  const be = Math.max(bs, clamp(Number(endDay)||3, 1, 7));
+  return {from: addDays(nextMonday, bs - 1), to: addDays(nextMonday, be - 1)};
+}
+function syncWeeklySettlements(){
+  if(!Array.isArray(db.weeklySettlements)) db.weeklySettlements = [];
+  const today = todayKey();
+  db.plans.forEach(plan => {
+    plan.tasks.forEach(task => {
+      if(task.mode !== 'weekly') return;
+      const range = taskRange(plan, task);
+      if(!range) return;
+      const anchor = task.from || plan.start;
+      let idx = 0;
+      while(idx < 5200){
+        const cs = addDays(anchor, idx * 7);
+        if(cs > range[1]) break;
+        const ce = addDays(cs, 6);
+        const checkDate = addDays(ce, 1);
+        if(ce >= range[0] && ce <= range[1] && today >= checkDate){
+          const target = weeklyTargetOf(task);
+          const checked = weeklyCheckedCount(task, cs, ce);
+          const success = checked >= target;
+          const key = plan.id + ':' + task.id + ':' + cs;
+          let rec = db.weeklySettlements.find(s => s.id === key);
+          if(!rec){
+            rec = {id:key, planId:plan.id, taskId:task.id, cycleStart:cs, cycleEnd:ce, checkDate, createdAt:new Date().toISOString()};
+            db.weeklySettlements.push(rec);
+          }
+          const banRange = (!success && task.penaltyMode === 'ban')
+            ? nextWeekBanRange(ce, task.banWeekStart, task.banWeekEnd)
+            : null;
+          rec.target = target;
+          rec.checked = checked;
+          rec.success = success;
+          rec.pts = success ? ((rec.success && rec.pts) ? Number(rec.pts)||0 : pointsForHours(task.estHours)) : 0;
+          rec.banFrom = banRange ? banRange.from : '';
+          rec.banTo = banRange ? banRange.to : '';
+          rec.planName = plan.name;
+          rec.taskName = task.name;
+          rec.penaltyItem = task.penalty || '';
+          rec.penaltyMode = task.penaltyMode || 'text';
+        }
+        idx++;
+      }
+    });
+  });
+}
+function penaltyLabel(task){
+  if(!task.penalty) return '';
+  if(task.mode === 'period' && task.penaltyMode === 'ban'){
+    const range = (task.banStart && task.banEnd) ? '（' + fmtMD(task.banStart) + ' – ' + fmtMD(task.banEnd) + '）' : '';
+    return '禁止 ' + task.penalty + range;
+  }
+  if(task.mode === 'weekly' && task.penaltyMode === 'ban'){
+    return '禁止 ' + task.penalty + '（下一周' + weekdaysText(task.banWeekStart, task.banWeekEnd) + '）';
+  }
+  return task.penalty;
+}
+function periodFailed(plan, task){
+  if(task.mode !== 'period' || !task.deadline) return false;
+  const dl = parseDateTime(task.deadline);
+  if(!dl || Date.now() <= dl.getTime()) return false;
+  const range = taskRange(plan, task);
+  if(!range) return false;
+  if(range[1] < task.deadline.slice(0,10)) return false;
+  return !periodCompletion(plan, task);
+}
+function periodState(plan, task){
+  if(task.mode !== 'period') return 'daily';
+  if(periodCompletion(plan, task)) return 'success';
+  if(periodFailed(plan, task)) return 'fail';
+  return 'pending';
+}
+function activeBansOn(date){
+  const out = [];
+  db.plans.forEach(plan => {
+    plan.tasks.forEach(task => {
+      if(task.mode !== 'period' || task.penaltyMode !== 'ban') return;
+      if(!task.banStart || !task.banEnd) return;
+      if(date < task.banStart || date > task.banEnd) return;
+      if(!periodFailed(plan, task)) return;
+      out.push({plan, task, planName: plan.name, item: task.penalty, mode: 'period'});
+    });
+  });
+  (db.weeklySettlements || []).forEach(s => {
+    if(!s.banFrom || !s.banTo) return;
+    if(date < s.banFrom || date > s.banTo) return;
+    if(!s.penaltyItem) return;
+    out.push({planName: s.planName || '', item: s.penaltyItem, mode: 'weekly', settlement: s});
+  });
+  return out;
+}
+function dailyDoneDays(plan, task){
+  const range = taskRange(plan, task);
+  if(!range) return 0;
+  const today = todayKey();
+  let n = 0, d = range[0];
+  while(d <= range[1] && d <= today){
+    if(!isDayTaskRemoved(d, task.id) && isTaskChecked(d, task.id)) n++;
+    d = addDays(d, 1);
+  }
+  return n;
+}
+function dailyMissedDays(plan, task){
+  const range = taskRange(plan, task);
+  if(!range) return 0;
+  const yesterday = addDays(todayKey(), -1);
+  const end = minKey(range[1], yesterday);
+  let n = 0, d = range[0];
+  while(d <= end){
+    if(!isDayTaskRemoved(d, task.id) && !isTaskChecked(d, task.id)) n++;
+    d = addDays(d, 1);
+  }
+  return n;
+}
+function dayDailyItems(date){
+  const items = [];
+  db.plans.forEach(plan => {
+    if(plan.archivedAt && date >= plan.archivedAt) return;
+    plan.tasks.forEach(task => {
+      const range = taskRange(plan, task);
+      if(!rangeHas(range, date)) return;
+      if(isDayTaskRemoved(date, task.id)) return;
+      if(task.mode === 'daily'){
+        items.push({ kind:'plan', plan, task, checked: isTaskChecked(date, task.id) });
+        return;
+      }
+      if(task.mode === 'weekly'){
+        if(isTaskChecked(date, task.id)) items.push({ kind:'plan', plan, task, checked:true });
+        return;
+      }
+      if(task.mode === 'period'){
+        const comp = periodCompletion(plan, task);
+        if(comp && comp.date === date) items.push({ kind:'plan', plan, task, checked:true });
+      }
+    });
+  });
+  const c = db.checkins[date];
+  if(c && c.extras){
+    c.extras.forEach(ex => {
+      items.push({ kind:'extra', extra:ex, checked: !!ex.done });
+    });
+  }
+  return items;
+}
+function dayStatus(date){
+  const items = dayDailyItems(date);
+  const total = items.length;
+  const done = items.filter(it => it.checked).length;
+  const today = todayKey();
+  let kind = 'none';
+  if(total === 0) kind = 'none';
+  else if(date > today) kind = 'future';
+  else if(done === total) kind = 'done';
+  else if(done > 0) kind = 'partial';
+  else kind = date === today ? 'today-empty' : 'missed';
+  return { total, done, kind };
+}
+function dayPeriodItems(date){
+  const out = [];
+  db.plans.forEach(plan => {
+    if(plan.archivedAt && date >= plan.archivedAt) return;
+    plan.tasks.forEach(task => {
+      if(task.mode !== 'period') return;
+      const range = taskRange(plan, task);
+      if(!rangeHas(range, date)) return;
+      if(isDayTaskRemoved(date, task.id)) return;
+      out.push({plan, task, state: periodState(plan, task), completion: periodCompletion(plan, task)});
+    });
+  });
+  return out;
+}
+function periodDeadlinesOn(date){
+  const out = [];
+  db.plans.forEach(plan => {
+    if(plan.archivedAt && date >= plan.archivedAt) return;
+    plan.tasks.forEach(task => {
+      if(task.mode === 'period' && task.deadline && task.deadline.slice(0,10) === date){
+        const range = taskRange(plan, task);
+        if(range) out.push({plan, task, state: periodState(plan, task)});
+      }
+    });
+  });
+  return out;
+}
+function earnedPoints(){
+  let total = 0;
+  Object.keys(db.checkins).forEach(date => {
+    const c = db.checkins[date];
+    if(!c) return;
+    Object.keys(c.tasks || {}).forEach(taskId => {
+      const rec = c.tasks[taskId];
+      if(rec) total += Number(rec.pts) || 0;
+    });
+    (c.extras || []).forEach(ex => { if(ex.done) total += Number(ex.pts) || 0; });
+  });
+  (db.weeklySettlements || []).forEach(s => { total += Number(s.pts) || 0; });
+  return total;
+}
+function spentPoints(){
+  return db.redemptions.reduce((sum, r) => sum + (Number(r.cost) || 0), 0);
+}
+function balancePoints(){ return earnedPoints() - spentPoints(); }
+
+/* ---------------- 导航 ---------------- */
+const NAV = [
+  {tab:'calendar', label:'日程', icon:'calendar'},
+  {tab:'plans', label:'规划', icon:'plan'},
+  {tab:'review', label:'回顾', icon:'review'},
+  {tab:'store', label:'商城', icon:'store'}
+];
+const state = {
+  tab: 'calendar',
+  calView: 'day',
+  selDate: todayKey(),
+  calMonth: (() => { const d = new Date(); return {y:d.getFullYear(), m:d.getMonth()}; })(),
+  calYear: new Date().getFullYear(),
+  reviewScope: 'all',
+  planDraft: null,
+  editingPlanId: null,
+  editingWishId: null,
+  journalTimer: null
+};
+
+function renderShell(){
+  $('#brandLogo').innerHTML = icon('leaf', 20);
+  $('#mobileLogo').innerHTML = icon('leaf', 17);
+  const pcArrow = $('#pcArrow');
+  if(pcArrow) pcArrow.innerHTML = icon('chevronRight', 12);
+  $('#sideNav').innerHTML = NAV.map(n =>
+    '<button class="nav-item' + (state.tab === n.tab ? ' active' : '') + '" data-tab="' + n.tab + '">' +
+      icon(n.icon, 18) + '<span>' + n.label + '</span>' +
+    '</button>'
+  ).join('');
+  $('#bottomNav').innerHTML = NAV.map(n =>
+    '<button class="bnav-item' + (state.tab === n.tab ? ' active' : '') + '" data-tab="' + n.tab + '">' +
+      icon(n.icon, 21) + '<span>' + n.label + '</span>' +
+    '</button>'
+  ).join('');
+  updatePointsUI();
+}
+function updatePointsUI(){
+  const bal = balancePoints();
+  const s = $('#sidePoints'); if(s) s.textContent = bal;
+  const m = $('#mobilePoints'); if(m) m.textContent = bal;
+}
+function setTab(tab){
+  if(!NAV.some(n => n.tab === tab)) return;
+  state.tab = tab;
+  renderShell();
+  renderView();
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+/* ---------------- 页面渲染入口 ---------------- */
+function renderView(){
+  clearTimeout(state.journalTimer);
+  state.journalTimer = null;
+  commitJournal(true);
+  const view = $('#view');
+  if(state.tab === 'calendar') view.innerHTML = renderCalendarPage();
+  else if(state.tab === 'plans') view.innerHTML = renderPlansPage();
+  else if(state.tab === 'review') view.innerHTML = renderReviewPage();
+  else if(state.tab === 'store') view.innerHTML = renderStorePage();
+  updatePointsUI();
+  bindViewExtras();
+}
+function bindViewExtras(){
+  // 为日记输入框绑定自动保存
+  const ta = $('#journalInput');
+  if(ta){
+    ta.addEventListener('input', () => {
+      const st = $('#journalState');
+      if(st) st.textContent = '正在保存…';
+      clearTimeout(state.journalTimer);
+      state.journalTimer = setTimeout(() => {
+        commitJournal(false);
+        const st2 = $('#journalState');
+        if(st2) st2.textContent = '已保存 ' + fmtStampShort(new Date().toISOString());
+      }, 600);
+    });
+    ta.addEventListener('blur', () => commitJournal(false));
+  }
+}
+function commitJournal(silent){
+  const ta = $('#journalInput');
+  if(!ta) return;
+  const date = ta.getAttribute('data-date');
+  const val = ta.value;
+  if(!date) return;
+  const existing = db.checkins[date];
+  if(!existing && !val) return;
+  const c = ensureDay(date);
+  if(c.journal === val) return;
+  c.journal = val;
+  saveDB();
+  if(!silent){
+    const st = $('#journalState');
+    if(st) st.textContent = '已保存 ' + fmtStampShort(new Date().toISOString());
+  }
+}
+
+/* ============================================================
+   日程
+   ============================================================ */
+function renderCalendarPage(){
+  const seg = '<div class="segmented" role="tablist">' +
+    [['day','日'],['month','月'],['year','年']].map(([k,l]) =>
+      '<button data-act="cal-view" data-view="' + k + '" class="' + (state.calView===k?'active':'') + '">' + l + '</button>'
+    ).join('') + '</div>';
+  let headSub = '记录每一天，也回看走过的路';
+  if(state.calView === 'month') headSub = '一眼看见这个月的节奏';
+  if(state.calView === 'year') headSub = '把一整年的坚持铺开来看';
+  const head = '<div class="page-head cal-page-head"><div><h1>日程</h1><p class="sub">' + headSub + '</p></div>' + seg + '</div>';
+  if(state.calView === 'day') return head + renderDayView();
+  if(state.calView === 'month') return head + renderMonthView();
+  return head + renderYearView();
+}
+
+function renderDayView(){
+  const date = state.selDate;
+  const today = todayKey();
+  const st = dayStatus(date);
+  const d = parseKey(date);
+  const deadlines = periodDeadlinesOn(date);
+  const isToday = date === today;
+  const isFuture = date > today;
+
+  const bannerClass = st.kind === 'done' ? ' is-done' : (st.kind === 'missed' ? ' is-missed' : ((st.kind === 'none' || st.kind === 'future' || st.kind === 'today-empty') ? ' is-empty' : ''));
+  const pct = st.total ? Math.round(st.done / st.total * 100) : 0;
+  let title = '', desc = '';
+  if(st.kind === 'none'){
+    title = '这一天还没有安排';
+    desc = '在下面添加临时任务，或去「规划」页建立一个长期计划。';
+  }else if(st.kind === 'future'){
+    title = '计划 ' + st.total + ' 项任务';
+    desc = '还没到这一天，先把想做的事放在这里。';
+  }else if(st.kind === 'done'){
+    title = isToday ? '今天已完成' : '当日已完成';
+    desc = '当天安排的任务都完成了，稳稳的一天。';
+  }else if(st.kind === 'partial'){
+    title = '完成 ' + st.done + ' / ' + st.total + ' 项';
+    desc = '还差 ' + (st.total - st.done) + ' 项任务。';
+  }else if(st.kind === 'missed'){
+    title = '当日未完成';
+    desc = '这一天已经过去，记录仍可以随时调整。';
+  }else{
+    title = '今天还没有打卡';
+    desc = '从最小的一项开始就好。';
+  }
+  const flagHtml = deadlines.length
+    ? '<div class="db-flag">' + icon('flag', 14) + '<span>' + (isToday?'今天':'当日') + '有 ' + deadlines.length + ' 项截止</span></div>'
+    : '';
+
+  const banner =
+    '<div class="day-banner' + bannerClass + '">' +
+      '<div class="ring" style="--p:' + pct + '"><b>' + (st.total ? st.done + '/' + st.total : '—') + '</b></div>' +
+      '<div class="db-text"><div class="db-title">' + title + (isToday ? ' <span class="tag tag-today">今天</span>' : '') + '</div><div class="db-desc">' + desc + '</div></div>' +
+      flagHtml +
+    '</div>';
+
+  const dayHead =
+    '<div class="day-head">' +
+      '<div>' +
+        '<div class="eyebrow">' + d.getFullYear() + '年 · 第 ' + getWeekNumber(d) + ' 周</div>' +
+        '<div class="day-title"><h2>' + (d.getMonth()+1) + '月' + d.getDate() + '日</h2><span class="weekday">' + weekdayCN(date) + '</span></div>' +
+        '<div class="day-sub">' + (isFuture ? '未来的一天' : (isToday ? '今天' : '过去的一天')) + '</div>' +
+      '</div>' +
+      '<div class="cal-nav">' +
+        '<button class="btn-icon" data-act="day-prev" aria-label="前一天">' + icon('chevronLeft', 16) + '</button>' +
+        '<button class="btn btn-ghost btn-sm" data-act="day-today">今天</button>' +
+        '<button class="btn-icon" data-act="day-next" aria-label="后一天">' + icon('chevronRight', 16) + '</button>' +
+      '</div>' +
+    '</div>';
+
+  const layout =
+    '<div class="day-layout">' +
+      '<div class="stack">' + renderDayTasks(date) + '</div>' +
+      '<div class="stack">' + renderJournalPanel(date) + '</div>' +
+    '</div>';
+  return dayHead + banner + banStripHtml(date) + layout;
+}
+function banStripHtml(date){
+  const bans = activeBansOn(date);
+  if(!bans.length) return '';
+  const items = bans.map(b =>
+    '<span class="ban-item">' + icon('ban', 13) + '<b>' + esc(b.item) + '</b><em>' + esc(b.planName) + '</em></span>'
+  ).join('');
+  return '<div class="ban-strip">' +
+      '<div class="ban-head">' + icon('ban', 15) + '<span>惩罚期 · 今日禁止</span></div>' +
+      '<div class="ban-items">' + items + '</div>' +
+    '</div>';
+}
+function getWeekNumber(d){
+  const tmp = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = tmp.getDay() || 7;
+  tmp.setDate(tmp.getDate() + 4 - day);
+  const yearStart = new Date(tmp.getFullYear(), 0, 1);
+  return Math.ceil((((tmp - yearStart) / DAY_MS) + 1) / 7);
+}
+
+function renderDayTasks(date){
+  const groups = [];
+  db.plans.forEach(plan => {
+    if(plan.archivedAt && date >= plan.archivedAt) return;
+    const modeRank = t => t.mode === 'daily' ? 0 : t.mode === 'weekly' ? 1 : 2;
+    const tasks = plan.tasks.filter(task => {
+      if(isDayTaskRemoved(date, task.id)) return false;
+      return rangeHas(taskRange(plan, task), date);
+    }).sort((a,b) => modeRank(a) - modeRank(b));
+    if(tasks.length) groups.push({plan, tasks});
+  });
+  const extras = (db.checkins[date] && db.checkins[date].extras) || [];
+  const totalItems = groups.reduce((n,g) => n + g.tasks.length, 0) + extras.length;
+  const today = todayKey();
+
+  let listHtml = '';
+  groups.forEach(g => {
+    const done = g.tasks.filter(t => t.mode === 'period' ? !!periodCompletion(g.plan,t) : isTaskChecked(date,t.id)).length;
+    listHtml +=
+      '<div class="day-group">' +
+        '<div class="day-group-head">' +
+          '<div class="day-group-name">' + icon('leaf', 13, '') + '<span>' + esc(g.plan.name) + '</span><span class="dg-date">' + fmtRange(g.plan.start, g.plan.end) + '</span></div>' +
+          '<span class="day-group-count">' + done + '/' + g.tasks.length + '</span>' +
+        '</div>' +
+        g.tasks.map(t => renderPlanTaskRow(date, g.plan, t, today)).join('') +
+      '</div>';
+  });
+  if(extras.length){
+    const done = extras.filter(e => e.done).length;
+    listHtml +=
+      '<div class="day-group">' +
+        '<div class="day-group-head">' +
+          '<div class="day-group-name">' + icon('spark', 13) + '<span>临时任务</span><span class="dg-date">仅影响这一天</span></div>' +
+          '<span class="day-group-count">' + done + '/' + extras.length + '</span>' +
+        '</div>' +
+        extras.map(ex => renderExtraRow(date, ex, today)).join('') +
+      '</div>';
+  }
+
+  let body;
+  if(!listHtml){
+    body = '<div class="empty">' +
+      '<div class="empty-ic">' + icon('leaf', 22) + '</div>' +
+      '<b>还没有安排</b><p>可以添加一项只属于这一天的小任务，或者去规划页建立长期计划。</p>' +
+    '</div>';
+  }else{
+    body = listHtml;
+  }
+
+  const addForm =
+    '<div class="extra-add">' +
+      '<form id="extraForm" data-form="extra" data-date="' + date + '">' +
+        '<div class="extra-form">' +
+          '<input class="input" id="extraName" maxlength="60" placeholder="为这一天添加一项临时任务" autocomplete="off">' +
+          '<input class="input hours" id="extraHours" type="number" min="0" step="0.5" placeholder="0" inputmode="decimal">' +
+          '<span class="unit">小时</span>' +
+          '<button type="submit" class="btn btn-soft btn-sm">' + icon('plus', 14) + '添加</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+
+  return '<section class="card panel tasks-panel">' +
+    '<div class="panel-head"><h3>当日任务</h3><span class="ph-sub">' + (totalItems ? totalItems + ' 项' : '可随时增删') + '</span></div>' +
+    body + addForm +
+  '</section>';
+}
+
+function renderPlanTaskRow(date, plan, task, today){
+  const isPeriod = task.mode === 'period';
+  const isWeekly = task.mode === 'weekly';
+  const comp = isPeriod ? periodCompletion(plan, task) : null;
+  const failed = isPeriod && periodFailed(plan, task);
+  const checked = isPeriod ? !!comp : isTaskChecked(date, task.id);
+  const isFuture = date > today;
+  const disabled = isFuture;
+  let pts = pointsForHours(task.estHours);
+  let meta = '';
+  let sub = '';
+  let subClass = 'muted';
+
+  if(isPeriod){
+    meta += '<span class="tag tag-period">' + icon('flag', 10) + '节点</span>';
+    meta += '<span class="t-sub muted" style="margin-top:0">截止 ' + fmtDateTime(task.deadline) + '</span>';
+    if(checked && comp){
+      sub = '已于 ' + fmtMD(comp.date) + ' 完成' + (task.reward ? ' · 奖励：' + esc(task.reward) : '');
+      subClass = 'reward';
+      pts = Number(comp.rec.pts) || 0;
+    }else if(failed){
+      sub = '已错过截止时间，可回到截止日前的日期补记' + (task.penalty ? ' · 惩罚：' + esc(task.penalty) + ((task.penaltyMode === 'ban' && task.banStart && task.banEnd) ? '（' + fmtMD(task.banStart) + ' – ' + fmtMD(task.banEnd) + '）' : '') : '');
+      subClass = 'penalty';
+      pts = 0;
+    }else{
+      sub = task.reward ? '在截止前完成 · 奖励：' + esc(task.reward) : '在截止时间前完成即算成功';
+      subClass = 'muted';
+    }
+  }else if(isWeekly){
+    const cycle = weeklyCycleAt(task, date);
+    const cycleStart = cycle ? cycle.start : date;
+    const cycleEnd = cycle ? cycle.end : date;
+    const target = weeklyTargetOf(task);
+    const cnt = weeklyCheckedCount(task, cycleStart, cycleEnd);
+    const settled = weeklySettlementFor(task, cycleStart);
+    meta += '<span class="tag tag-weekly">周期</span>';
+    meta += '<span class="t-sub muted" style="margin-top:0">每周 ' + target + ' 次 · 本周 ' + cnt + '/' + target + '</span>';
+    if(settled){
+      if(settled.success){
+        sub = '本周达标 ' + settled.checked + '/' + settled.target + (task.reward ? ' · 奖励：' + esc(task.reward) : '') + (Number(settled.pts) ? ' · +' + settled.pts + ' 积分' : '');
+        subClass = 'reward';
+        pts = Number(settled.pts) || 0;
+      }else{
+        sub = '本周仅 ' + settled.checked + '/' + settled.target + ' 次' + (task.penalty ? ' · 惩罚：' + esc(weeklyPenaltyText(task, settled)) : '');
+        subClass = 'penalty';
+        pts = 0;
+      }
+    }else{
+      sub = (checked ? '本期已打卡 · ' : '') + '本周 ' + cnt + '/' + target;
+      if(cnt >= target) sub += ' · 已达标，等待结算';
+      else if(task.reward) sub += ' · 达标后：' + esc(task.reward);
+      subClass = 'muted';
+    }
+  }else{
+    meta += '<span class="tag tag-daily">每日</span>';
+    if(checked){
+      const rec = db.checkins[date] && db.checkins[date].tasks[task.id];
+      pts = rec ? (Number(rec.pts)||0) : pts;
+      sub = task.reward ? '奖励：' + esc(task.reward) : '';
+      subClass = 'reward';
+    }else if(date < today){
+      sub = task.penalty ? '未完成 · 惩罚：' + esc(task.penalty) : '未完成';
+      subClass = 'penalty';
+      pts = 0;
+    }else if(date > today){
+      sub = task.reward ? '完成后：' + esc(task.reward) : '';
+      subClass = 'muted';
+    }else{
+      sub = task.reward ? '完成后：' + esc(task.reward) : '';
+      subClass = 'muted';
+    }
+  }
+
+  const checkBtn = '<button class="check' + (checked?' checked':'') + (disabled?' disabled':'') + '" data-act="toggle-task" data-date="' + date + '" data-task="' + task.id + '" aria-label="' + (checked?'取消打卡':'完成打卡') + '">' + icon('check', 12) + '</button>';
+  const removeBtn =
+    '<button class="t-remove" data-act="remove-day-task" data-date="' + date + '" data-task="' + task.id + '" title="从当天日程移除" aria-label="从当天日程移除">' + icon('x', 13) + '</button>';
+  const ptsHtml = pts > 0 ? '<span class="pts-badge">+' + pts + '</span>' : '<span class="pts-badge zero"></span>';
+
+  return '<div class="trow' + (checked?' done':'') + '">' +
+    checkBtn +
+    '<div class="t-main">' +
+      '<div class="t-name">' + esc(task.name) + '</div>' +
+      '<div class="t-meta">' + meta + '</div>' +
+      (sub ? '<div class="t-sub ' + subClass + '">' + sub + '</div>' : '') +
+    '</div>' +
+    '<div class="t-side">' + ptsHtml + removeBtn + '</div>' +
+  '</div>';
+}
+
+function renderExtraRow(date, ex, today){
+  const isFuture = date > today;
+  const checkBtn = '<button class="check' + (ex.done?' checked':'') + (isFuture?' disabled':'') + '" data-act="toggle-extra" data-date="' + date + '" data-extra="' + ex.id + '" aria-label="' + (ex.done?'取消打卡':'完成打卡') + '">' + icon('check', 12) + '</button>';
+  const sub = ex.done ? '已完成 · 获得 ' + (Number(ex.pts)||0) + ' 积分' : (isFuture ? '还没到这一天' : '仅影响这一天');
+  return '<div class="trow' + (ex.done?' done':'') + '">' +
+    checkBtn +
+    '<div class="t-main">' +
+      '<div class="t-name">' + esc(ex.name) + '</div>' +
+      '<div class="t-meta"><span class="tag tag-muted">临时</span></div>' +
+      '<div class="t-sub ' + (ex.done?'reward':'muted') + '">' + sub + '</div>' +
+    '</div>' +
+    '<div class="t-side">' + (Number(ex.pts) ? '<span class="pts-badge">+' + (Number(ex.pts)||0) + '</span>' : '') +
+      '<button class="t-remove" data-act="remove-extra" data-date="' + date + '" data-extra="' + ex.id + '" title="删除临时任务" aria-label="删除临时任务">' + icon('x', 13) + '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderJournalPanel(date){
+  const c = db.checkins[date] || {journal:''};
+  const isFuture = date > todayKey();
+  const tip = isFuture ? '也可以先写下一点想法' : '写几句今天的感受，或记下值得记住的小事';
+  return '<section class="card panel journal-panel">' +
+    '<div class="journal-head">' +
+      '<h3>' + icon('book', 16) + ' 当日总结</h3>' +
+      '<span class="save-state" id="journalState">' + (c.journal ? '已保存' : '自动保存') + '</span>' +
+    '</div>' +
+    '<textarea class="journal-area" id="journalInput" data-date="' + date + '" placeholder="' + tip + '">' + esc(c.journal || '') + '</textarea>' +
+    '<div class="journal-foot"><span class="jf-count">' + (c.journal ? c.journal.length + ' 字' : '') + '</span></div>' +
+  '</section>';
+}
+
+/* ---------------- 月视图 ---------------- */
+function renderMonthView(){
+  const {y, m} = state.calMonth;
+  const today = todayKey();
+  const first = new Date(y, m, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
+  let done = 0, partial = 0, missed = 0;
+
+  let cells = '';
+  const weekHeads = ['一','二','三','四','五','六','日'].map(d => '<div class="week-head">' + d + '</div>').join('');
+  for(let i=0; i<totalCells; i++){
+    const dayNum = i - offset + 1;
+    const cellDate = dateKey(new Date(y, m, dayNum));
+    const inMonth = dayNum >= 1 && dayNum <= daysInMonth;
+    const st = dayStatus(cellDate);
+    let cls = 'mcell';
+    if(!inMonth) cls += ' out';
+    else if(st.kind === 'done' || st.kind === 'partial' || st.kind === 'missed') cls += ' ' + st.kind;
+    if(cellDate === today) cls += ' today';
+    if(inMonth){
+      if(st.kind === 'done') done++;
+      else if(st.kind === 'partial') partial++;
+      else if(st.kind === 'missed') missed++;
+    }
+    const deadlines = periodDeadlinesOn(cellDate);
+    const bans = activeBansOn(cellDate);
+    const flag = deadlines.length
+      ? '<span class="mflag" title="节点任务截止">' + icon('flag', 13) + '</span>'
+      : '';
+    const ban = bans.length
+      ? '<span class="mban" title="今日禁止：' + esc(bans.map(b => b.item).join('、')) + '">禁</span>'
+      : '';
+    const dotClass = st.kind === 'done' ? 'done' : st.kind === 'partial' ? 'partial' : st.kind === 'missed' ? 'missed' : (st.kind === 'today-empty' || st.kind === 'future') ? st.kind : '';
+    const frac = st.total ? st.done + '/' + st.total : '';
+    const title = fmtMD(cellDate) + (st.total ? ' · 完成度 ' + st.done + '/' + st.total : ' · 无任务') + (deadlines.length ? ' · ' + deadlines.length + ' 项节点截止' : '') + (bans.length ? ' · 禁止 ' + bans.map(b => b.item).join('、') : '');
+    cells += '<button class="' + cls + '" data-act="goto-day" data-date="' + cellDate + '" title="' + esc(title) + '" aria-label="' + esc(title) + '">' +
+      '<span class="dnum">' + (inMonth ? dayNum : new Date(y, m, dayNum).getDate()) + '</span>' + flag + ban +
+      '<span class="mstatus">' + (st.total ? '<i class="mdot ' + dotClass + '"></i>' : '') + '<span class="mfrac">' + frac + '</span></span>' +
+    '</button>';
+  }
+
+  return '<div class="cal-toolbar">' +
+      '<div class="cal-title"><h2>' + y + '年 ' + (m+1) + '月</h2><span class="cal-note">' + done + ' 天完成</span></div>' +
+      '<div class="cal-nav">' +
+        '<button class="btn-icon" data-act="month-prev" aria-label="上个月">' + icon('chevronLeft', 16) + '</button>' +
+        '<button class="btn btn-ghost btn-sm" data-act="month-today">本月</button>' +
+        '<button class="btn-icon" data-act="month-next" aria-label="下个月">' + icon('chevronRight', 16) + '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card month-card">' +
+      '<div class="month-grid">' + weekHeads + cells + '</div>' +
+      '<div class="month-foot">' +
+        '<div class="month-summary">本月完成 <b>' + done + '</b> 天 · 部分完成 <b>' + partial + '</b> 天 · 未完成 <b>' + missed + '</b> 天</div>' +
+        '<div class="legend"><span><i class="l-done"></i>完成</span><span><i class="l-part"></i>部分</span><span><i class="l-miss"></i>未完成</span><span>' + icon('flag', 11) + '节点截止</span><span class="lg-ban">' + icon('ban', 11) + '禁止期</span></div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------------- 年视图 ---------------- */
+function renderYearView(){
+  const y = state.calYear;
+  const today = todayKey();
+  const weekHeads = ['一','二','三','四','五','六','日'].map(d => '<span class="wh">' + d + '</span>').join('');
+  let done = 0, partial = 0, missed = 0;
+  let months = '';
+  for(let m=0; m<12; m++){
+    const first = new Date(y, m, 1);
+    const offset = (first.getDay() + 6) % 7;
+    const days = new Date(y, m+1, 0).getDate();
+    let cells = weekHeads;
+    for(let i=0; i<offset; i++) cells += '<span class="mini-cell none"></span>';
+    for(let day=1; day<=days; day++){
+      const key = dateKey(new Date(y, m, day));
+      const st = dayStatus(key);
+      if(st.kind === 'done') done++;
+      else if(st.kind === 'partial') partial++;
+      else if(st.kind === 'missed') missed++;
+      const dls = periodDeadlinesOn(key);
+      let cls = 'mini-cell';
+      if(st.kind === 'done' || st.kind === 'partial' || st.kind === 'missed') cls += ' ' + st.kind;
+      else cls += ' ' + (key > today ? 'future' : 'none');
+      if(key === today) cls += ' today';
+      const flag = dls.length ? '<span class="mflag">' + icon('flag', 7) + '</span>' : '';
+      const title = fmtMD(key) + (st.total ? ' · 每日任务 ' + st.done + '/' + st.total : '') + (dls.length ? ' · 节点截止' : '');
+      cells += '<button class="' + cls + '" data-act="goto-day" data-date="' + key + '" title="' + esc(title) + '" aria-label="' + esc(title) + '">' + flag + '</button>';
+    }
+    months += '<div class="mini-month">' +
+      '<div class="mini-head"><button data-act="goto-month" data-y="' + y + '" data-m="' + m + '">' + (m+1) + '月</button><span>' + (m===0?'JAN':m===1?'FEB':m===2?'MAR':m===3?'APR':m===4?'MAY':m===5?'JUN':m===6?'JUL':m===7?'AUG':m===8?'SEP':m===9?'OCT':m===10?'NOV':'DEC') + '</span></div>' +
+      '<div class="mini-grid">' + cells + '</div>' +
+    '</div>';
+  }
+  return '<div class="cal-toolbar">' +
+      '<div class="cal-title"><h2>' + y + '年</h2><span class="cal-note">' + done + ' 天完成</span></div>' +
+      '<div class="cal-nav">' +
+        '<button class="btn-icon" data-act="year-prev" aria-label="上一年">' + icon('chevronLeft', 16) + '</button>' +
+        '<button class="btn btn-ghost btn-sm" data-act="year-today">今年</button>' +
+        '<button class="btn-icon" data-act="year-next" aria-label="下一年">' + icon('chevronRight', 16) + '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="year-grid">' + months + '</div>' +
+    '<div class="year-foot">' +
+      '<div class="month-summary">全年完成 <b>' + done + '</b> 天 · 部分完成 <b>' + partial + '</b> 天 · 未完成 <b>' + missed + '</b> 天</div>' +
+      '<div class="legend"><span><i class="l-done"></i>完成</span><span><i class="l-part"></i>部分</span><span><i class="l-miss"></i>未完成</span><span>' + icon('flag', 11) + '节点截止</span></div>' +
+    '</div>';
+}
+
+/* ============================================================
+   日程交互
+   ============================================================ */
+function setCalView(v){
+  state.calView = v;
+  if(v === 'month'){
+    const d = parseKey(state.selDate);
+    state.calMonth = {y:d.getFullYear(), m:d.getMonth()};
+  }
+  if(v === 'year') state.calYear = parseKey(state.selDate).getFullYear();
+  renderView();
+}
+function goDay(date){
+  state.selDate = date;
+  state.calView = 'day';
+  const d = parseKey(date);
+  state.calMonth = {y:d.getFullYear(), m:d.getMonth()};
+  state.calYear = d.getFullYear();
+  renderView();
+}
+function addExtra(date, name, hours){
+  name = (name||'').trim();
+  if(!name){ toast('先写下这项任务的名字'); return; }
+  const c = ensureDay(date);
+  c.extras.push({
+    id: uid(), name,
+    hours: Math.max(0, Number(hours) || 0),
+    pts: pointsForHours(hours),
+    done: false, at: null,
+    createdAt: new Date().toISOString()
+  });
+  saveDB();
+  renderView();
+  toast('已添加到这一天');
+}
+function togglePlanTask(date, taskId){
+  const found = findTask(taskId);
+  if(!found) return;
+  const {plan, task} = found;
+  const today = todayKey();
+  if(date > today){ toast('还没到这一天，先好好期待'); return; }
+  if(!rangeHas(taskRange(plan, task), date)) return;
+
+  if(task.mode === 'period'){
+    const comp = periodCompletion(plan, task);
+    if(comp){
+      if(db.checkins[comp.date] && db.checkins[comp.date].tasks[taskId]){
+        delete db.checkins[comp.date].tasks[taskId];
+        saveDB(); renderView(); toast('已取消这次打卡');
+      }
+      return;
+    }
+    const c = ensureDay(date);
+    c.tasks[taskId] = { at: new Date().toISOString(), pts: pointsForHours(task.estHours) };
+    saveDB(); renderView();
+    const pts = pointsForHours(task.estHours);
+    toast('已完成' + (task.reward ? ' · 奖励：' + task.reward : '') + (pts ? ' · +' + pts + ' 积分' : ''));
+    return;
+  }
+
+  if(task.mode === 'weekly'){
+    const c = ensureDay(date);
+    if(c.tasks[taskId]){
+      delete c.tasks[taskId];
+      saveDB(); renderView();
+      toast('已取消这一天的打卡');
+      return;
+    }
+    c.tasks[taskId] = { at: new Date().toISOString(), pts: 0 };
+    saveDB(); renderView();
+    const cycle = weeklyCycleAt(task, date);
+    const target = weeklyTargetOf(task);
+    const cnt = cycle ? weeklyCheckedCount(task, cycle.start, cycle.end) : 0;
+    const settled = cycle ? weeklySettlementFor(task, cycle.start) : null;
+    let msg = '已打卡 · 本周 ' + cnt + '/' + target;
+    if(task.reward) msg += ' · 奖励：' + task.reward;
+    if(settled && settled.success && Number(settled.pts)) msg += ' · 本周已达标 +' + Number(settled.pts) + ' 积分';
+    else if(cnt >= target) msg += ' · 已达标，等待结算';
+    toast(msg);
+    return;
+  }
+
+  const c = ensureDay(date);
+  if(c.tasks[taskId]){
+    delete c.tasks[taskId];
+    saveDB(); renderView();
+    toast('已取消这一天的打卡');
+    return;
+  }
+  c.tasks[taskId] = { at: new Date().toISOString(), pts: pointsForHours(task.estHours) };
+  saveDB(); renderView();
+  const pts = pointsForHours(task.estHours);
+  const st = dayStatus(date);
+  const completeText = (st.total > 1 && st.done === st.total) ? ' · 当日全部完成' : '';
+  toast('已完成' + (task.reward ? ' · 奖励：' + task.reward : '') + (pts ? ' · +' + pts + ' 积分' : '') + completeText);
+}
+function toggleExtra(date, extraId){
+  const c = db.checkins[date];
+  if(!c) return;
+  const ex = c.extras.find(e => e.id === extraId);
+  if(!ex) return;
+  if(date > todayKey()){ toast('还没到这一天'); return; }
+  ex.done = !ex.done;
+  ex.at = ex.done ? new Date().toISOString() : null;
+  saveDB(); renderView();
+  if(ex.done) toast('已完成 · +' + (Number(ex.pts)||0) + ' 积分');
+  else toast('已取消打卡');
+}
+function removeExtra(date, extraId){
+  const c = db.checkins[date];
+  if(!c) return;
+  const ex = c.extras.find(e => e.id === extraId);
+  if(!ex) return;
+  const idx = c.extras.indexOf(ex);
+  c.extras.splice(idx, 1);
+  saveDB(); renderView();
+  toast('已删除临时任务');
+}
+function removeDayTask(date, taskId){
+  const found = findTask(taskId);
+  if(!found) return;
+  const c = ensureDay(date);
+  if(!c.removed.includes(taskId)) c.removed.push(taskId);
+  if(found.task.mode !== 'period' && c.tasks[taskId]) delete c.tasks[taskId];
+  saveDB(); renderView();
+  toast('已从当天日程移除，其他日期不受影响');
+}
+function handleExtraForm(form){
+  const date = form.getAttribute('data-date');
+  const name = $('#extraName').value;
+  const hours = $('#extraHours').value;
+  addExtra(date, name, hours);
+}
+function handleAction(act, el){
+  const date = el.getAttribute('data-date');
+  switch(act){
+    case 'cal-view': setCalView(el.getAttribute('data-view')); break;
+    case 'day-prev': goDay(addDays(state.selDate, -1)); break;
+    case 'day-next': goDay(addDays(state.selDate, 1)); break;
+    case 'day-today': goDay(todayKey()); break;
+    case 'month-prev': {
+      let {y, m} = state.calMonth; m--; if(m < 0){ m = 11; y--; }
+      state.calMonth = {y, m}; renderView(); break;
+    }
+    case 'month-next': {
+      let {y, m} = state.calMonth; m++; if(m > 11){ m = 0; y++; }
+      state.calMonth = {y, m}; renderView(); break;
+    }
+    case 'month-today': {
+      const d = new Date(); state.calMonth = {y:d.getFullYear(), m:d.getMonth()}; renderView(); break;
+    }
+    case 'year-prev': state.calYear--; renderView(); break;
+    case 'year-next': state.calYear++; renderView(); break;
+    case 'year-today': state.calYear = new Date().getFullYear(); renderView(); break;
+    case 'goto-day': goDay(date); break;
+    case 'goto-month': {
+      state.calMonth = {y:Number(el.getAttribute('data-y')), m:Number(el.getAttribute('data-m'))};
+      state.calView = 'month'; renderView(); break;
+    }
+    case 'toggle-task': togglePlanTask(date, el.getAttribute('data-task')); break;
+    case 'remove-day-task': removeDayTask(date, el.getAttribute('data-task')); break;
+    case 'toggle-extra': toggleExtra(date, el.getAttribute('data-extra')); break;
+    case 'remove-extra': removeExtra(date, el.getAttribute('data-extra')); break;
+  }
+}
+
+/* ============================================================
+   规划
+   ============================================================ */
+function planStatusOf(plan){
+  const today = todayKey();
+  if(plan.archivedAt) return {key:'archived', label:'已归档'};
+  if(today < plan.start) return {key:'future', label:'未开始'};
+  if(today > planEndKey(plan)) return {key:'ended', label:'已结束'};
+  return {key:'active', label:'进行中'};
+}
+function planCompletedDays(plan){
+  const today = todayKey();
+  const end = minKey(planEndKey(plan), today);
+  let n = 0, d = plan.start;
+  while(d <= end){
+    const daily = plan.tasks.filter(t => t.mode === 'daily')
+      .filter(t => rangeHas(taskRange(plan,t), d) && !isDayTaskRemoved(d, t.id));
+    if(daily.length && daily.every(t => isTaskChecked(d, t.id))) n++;
+    d = addDays(d, 1);
+  }
+  return n;
+}
+function taskMetrics(plan, task){
+  const range = taskRange(plan, task);
+  if(!range) return {days:0, rewards:0, penalties:0, points:0, state:'none'};
+  if(task.mode === 'weekly'){
+    const today = todayKey();
+    const end = minKey(range[1], today);
+    let days = 0, d = range[0];
+    while(d <= end){
+      if(!isDayTaskRemoved(d, task.id) && isTaskChecked(d, task.id)) days++;
+      d = addDays(d, 1);
+    }
+    const settlements = weeklyTaskSettlements(plan.id, task.id);
+    const rewards = settlements.filter(s => s.success).length;
+    const penalties = settlements.filter(s => !s.success).length;
+    const points = settlements.reduce((n, s) => n + (Number(s.pts) || 0), 0);
+    return {days, rewards, penalties, points, state:'weekly', settlements};
+  }
+  if(task.mode === 'period'){
+    const comp = periodCompletion(plan, task);
+    if(comp) return {days:1, rewards:1, penalties:0, points:Number(comp.rec.pts)||0, state:'success', completion:comp};
+    if(periodFailed(plan, task)) return {days:0, rewards:0, penalties:1, points:0, state:'fail'};
+    return {days:0, rewards:0, penalties:0, points:0, state:'pending'};
+  }
+  const done = dailyDoneDays(plan, task);
+  const missed = dailyMissedDays(plan, task);
+  let points = 0, d = range[0];
+  const today = todayKey();
+  while(d <= range[1] && d <= today){
+    const c = db.checkins[d];
+    if(c && c.tasks && c.tasks[task.id] && !isDayTaskRemoved(d, task.id)){
+      points += Number(c.tasks[task.id].pts) || 0;
+    }
+    d = addDays(d, 1);
+  }
+  return {days:done, rewards:done, penalties:missed, points, state:'daily'};
+}
+function planMetrics(plan){
+  let rewards = 0, penalties = 0, points = 0;
+  const rows = plan.tasks.map(task => {
+    const m = taskMetrics(plan, task);
+    rewards += m.rewards; penalties += m.penalties; points += m.points;
+    return {task, m};
+  });
+  return {completedDays:planCompletedDays(plan), rewards, penalties, points, rows};
+}
+function renderPlansPage(){
+  const active = db.plans.filter(p => !p.archivedAt);
+  const archived = db.plans.filter(p => p.archivedAt);
+  const head =
+    '<div class="page-head"><div><h1>规划</h1><p class="sub">把长期目标拆成一个个可执行的日子</p></div>' +
+      '<div class="page-actions"><button class="btn btn-primary" data-act="new-plan">' + icon('plus', 15) + '新建规划</button></div>' +
+    '</div>';
+  let body;
+  if(!active.length){
+    body = '<div class="card empty" style="padding:56px 22px">' +
+      '<div class="empty-ic">' + icon('plan', 22) + '</div>' +
+      '<b>还没有进行中的规划</b><p>选一个时间段，列出想坚持的任务。每日任务用来养成习惯，周期任务用来保持每周频率，节点任务用来完成一件有截止时间的事。</p>' +
+      '<button class="btn btn-primary mt-3" data-act="new-plan">' + icon('plus', 15) + '创建第一个规划</button>' +
+    '</div>';
+  }else{
+    body = '<div class="plan-grid">' + active.map(renderPlanCard).join('') + '</div>';
+  }
+  let archHtml = '';
+  if(archived.length){
+    archHtml = '<details class="archived-wrap"><summary>' + icon('archive', 14) + '已归档 <span class="arch-count">' + archived.length + '</span></summary>' +
+      '<div class="plan-grid">' + archived.map(renderPlanCard).join('') + '</div></details>';
+  }
+  return head + body + archHtml;
+}
+function renderPlanCard(plan){
+  const status = planStatusOf(plan);
+  const met = planMetrics(plan);
+  const today = todayKey();
+  const allActive = plan.tasks.filter(t => !t.to);
+  const dailyToday = plan.tasks.filter(t => t.mode === 'daily' && rangeHas(taskRange(plan,t), today) && !isDayTaskRemoved(today,t.id));
+  const doneToday = dailyToday.filter(t => isTaskChecked(today, t.id)).length;
+  let todayState = '今日 ' + doneToday + '/' + dailyToday.length;
+  if(status.key === 'future') todayState = '尚未开始';
+  else if(status.key === 'archived') todayState = '历史已保留';
+  else if(status.key === 'ended') todayState = '已结束';
+  else if(!dailyToday.length) todayState = '今日无每日任务';
+
+  const chips = allActive.slice(0, 4).map(t =>
+    '<span class="plan-chip' + (t.mode === 'period' ? ' period' : t.mode === 'weekly' ? ' weekly' : '') + '"><i></i><span>' + esc(t.name) + '</span></span>'
+  ).join('');
+  const more = allActive.length > 4 ? '<span class="plan-chip more">+' + (allActive.length - 4) + '</span>' : '';
+
+  return '<article class="plan-card card" data-act="view-plan" data-plan="' + plan.id + '" tabindex="0" role="button" aria-label="查看规划 ' + esc(plan.name) + '">' +
+    '<div class="plan-card-top">' +
+      '<div><h3>' + esc(plan.name) + '</h3><div class="plan-range">' + esc(plan.start) + ' – ' + esc(plan.end) + '</div></div>' +
+      '<span class="plan-status ' + status.key + '">' + status.label + '</span>' +
+    '</div>' +
+    '<div class="plan-mini-stats">' +
+      '<div><b>' + met.completedDays + '</b><span>坚持天数</span></div>' +
+      '<div><b>' + allActive.length + '</b><span>任务</span></div>' +
+      '<div><b>' + doneToday + '<span style="font-size:11px;color:#aab6ab">/</span>' + dailyToday.length + '</b><span>今日完成</span></div>' +
+    '</div>' +
+    '<div class="plan-task-chips">' + (chips || '<span class="plan-chip more">暂无任务</span>') + more + '</div>' +
+    '<div class="plan-card-foot">' +
+      '<span class="today-state">' + todayState + '</span>' +
+      '<div class="ico-actions">' +
+        (plan.archivedAt ? '<button class="btn-icon" data-act="plan-review" data-plan="' + plan.id + '" title="查看回顾">' + icon('review', 15) + '</button>' :
+          '<button class="btn-icon" data-act="edit-plan" data-plan="' + plan.id + '" title="编辑规划">' + icon('edit', 15) + '</button>' +
+          '<button class="btn-icon" data-act="archive-plan" data-plan="' + plan.id + '" title="归档规划">' + icon('archive', 15) + '</button>') +
+      '</div>' +
+    '</div>' +
+  '</article>';
+}
+
+/* ---------------- 规划详情 ---------------- */
+function openPlanDetail(planId){
+  const plan = findPlan(planId);
+  if(!plan) return;
+  const met = planMetrics(plan);
+  const status = planStatusOf(plan);
+  const taskRows = plan.tasks.map(t => {
+    const tm = taskMetrics(plan, t);
+    const sub = t.mode === 'period'
+      ? '节点 · 截止 ' + fmtDateTime(t.deadline)
+      : t.mode === 'weekly'
+        ? '周期 · 每周 ' + weeklyTargetOf(t) + ' 次 · 达标 +' + pointsForHours(t.estHours) + ' 积分'
+        : '每日 · 预计 ' + fmtHours(t.estHours) + ' 小时';
+    const rewardsText = t.reward ? '奖励：' + esc(t.reward) : '';
+    const penaltiesText = t.penalty ? '惩罚：' + esc(penaltyLabel(t)) : '';
+    return '<div class="detail-task">' +
+      '<div class="dt-main">' +
+        '<div class="dt-name">' + esc(t.name) + '<span class="tag ' + taskModeClass(t.mode) + '">' + taskModeShort(t.mode) + '</span></div>' +
+        '<div class="dt-sub">' + sub + '</div>' +
+        ((rewardsText || penaltiesText) ? '<div class="dt-sub">' + [rewardsText, penaltiesText].filter(Boolean).join(' · ') + '</div>' : '') +
+      '</div>' +
+      '<div class="dt-metrics">' +
+        '<span><b>' + tm.days + '</b>坚持天数</span>' +
+        '<span><b>' + tm.rewards + '</b>奖励</span>' +
+        '<span><b>' + tm.penalties + '</b>惩罚</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  const body =
+    '<div class="detail-hero"><div><h2>' + esc(plan.name) + '</h2><div class="sub">' + esc(plan.start) + ' – ' + esc(plan.end) + ' · ' + status.label + '</div></div>' +
+      '<span class="plan-status ' + status.key + '">' + status.label + '</span></div>' +
+    '<div class="detail-stats">' +
+      '<div class="detail-stat"><b>' + met.completedDays + '</b><span>坚持天数</span></div>' +
+      '<div class="detail-stat"><b>' + met.rewards + '</b><span>奖励次数</span></div>' +
+      '<div class="detail-stat"><b>' + met.penalties + '</b><span>惩罚次数</span></div>' +
+      '<div class="detail-stat"><b>' + met.points + '</b><span>获得积分</span></div>' +
+    '</div>' +
+    '<div class="detail-section-title">任务明细</div>' +
+    '<div>' + (taskRows || '<div class="empty" style="padding:20px"><p>暂无任务</p></div>') + '</div>';
+
+  const footer = plan.archivedAt
+    ? '<div class="mf-note">归档规划的记录已冻结保留</div><div class="mf-actions"><button class="btn btn-primary" data-act="plan-review" data-plan="' + plan.id + '">' + icon('review', 15) + '查看回顾</button></div>'
+    : '<div class="mf-note">任务改名与奖惩调整会同步历史日程</div><div class="mf-actions"><button class="btn btn-danger-soft" data-act="archive-plan" data-plan="' + plan.id + '">' + icon('archive', 14) + '归档</button><button class="btn btn-primary" data-act="edit-plan" data-plan="' + plan.id + '">' + icon('edit', 14) + '编辑规划</button></div>';
+
+  openModal(
+    '<div class="modal-head"><div><h3>规划详情</h3><p>' + met.rows.length + ' 项任务 · 已坚持 ' + met.completedDays + ' 天</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' + body + '</div>' +
+    '<div class="modal-foot">' + footer + '</div>',
+    {wide:true}
+  );
+}
+
+/* ---------------- 规划编辑 ---------------- */
+function blankTask(){
+  return {
+    id: 'new-' + uid(),
+    name: '', mode: 'daily', deadline: '', estHours: '',
+    weeklyTarget: 3, banWeekStart: 1, banWeekEnd: 3,
+    reward: '', penalty: '', penaltyMode: 'text', banStart: '', banEnd: '',
+    isNew: true, from: null
+  };
+}
+function openPlanEditor(planId){
+  const plan = planId ? findPlan(planId) : null;
+  if(plan && plan.archivedAt){ toast('已归档的规划不能编辑', 'terra'); return; }
+  state.editingPlanId = plan ? plan.id : null;
+  if(plan){
+    const tasks = plan.tasks.filter(t => !t.to).map(t => ({
+      id: t.id, name: t.name, mode: t.mode, deadline: t.deadline,
+      estHours: t.estHours, reward: t.reward, penalty: t.penalty,
+      weeklyTarget: t.weeklyTarget || 3, banWeekStart: t.banWeekStart || 1, banWeekEnd: t.banWeekEnd || 3,
+      penaltyMode: t.penaltyMode || 'text', banStart: t.banStart || '', banEnd: t.banEnd || '',
+      isNew: false, from: t.from, originalFrom: t.from
+    }));
+    state.planDraft = {name: plan.name, start: plan.start, end: plan.end, tasks, originalStart: plan.start};
+  }else{
+    const start = todayKey();
+    const end = addDays(start, 30);
+    state.planDraft = {name: '', start, end, tasks:[blankTask()], originalStart: null};
+  }
+  renderPlanEditor();
+}
+function taskEditorRow(t, idx){
+  const isPeriod = t.mode === 'period';
+  const isWeekly = t.mode === 'weekly';
+  const banMode = (isPeriod || isWeekly) && t.penaltyMode === 'ban';
+  const deadline = t.deadline || (state.planDraft.end + 'T18:00');
+  const banStart = t.banStart || (t.deadline ? t.deadline.slice(0,10) : state.planDraft.end);
+  const banEnd = t.banEnd || addDays(banStart, 2);
+  const weeklyTarget = clamp(Number(t.weeklyTarget)||3, 1, 7);
+  const banWeekStart = clamp(Number(t.banWeekStart)||1, 1, 7);
+  const banWeekEnd = Math.max(banWeekStart, clamp(Number(t.banWeekEnd)||3, 1, 7));
+  const countOptions = Array.from({length:7}, (_, i) =>
+    '<option value="' + (i+1) + '"' + ((i+1) === weeklyTarget ? ' selected' : '') + '>' + (i+1) + ' 次</option>'
+  ).join('');
+  const weekdayOptions = (sel) => WEEKDAY_NAMES.map((n, i) =>
+    '<option value="' + (i+1) + '"' + ((i+1) === sel ? ' selected' : '') + '>' + n + '</option>'
+  ).join('');
+  const ptsText = (isWeekly ? '达标 +' : '+') + pointsForHours(t.estHours) + ' 积分';
+  return '<div class="task-editor" data-idx="' + idx + '">' +
+    '<div class="te-head">' +
+      '<div class="te-left"><span class="te-index">' + pad2(idx+1) + '</span>' +
+        '<div class="te-seg"><button type="button" data-act="pe-mode" data-idx="' + idx + '" data-mode="daily" class="' + (t.mode === 'daily' || !t.mode ? 'active' : '') + '">每日任务</button>' +
+        '<button type="button" data-act="pe-mode" data-idx="' + idx + '" data-mode="weekly" class="' + (isWeekly?'active':'') + '">周期任务</button>' +
+        '<button type="button" data-act="pe-mode" data-idx="' + idx + '" data-mode="period" class="' + (isPeriod?'active':'') + '">节点任务</button></div>' +
+      '</div>' +
+      '<button type="button" class="te-remove" data-act="pe-remove-task" data-idx="' + idx + '" aria-label="删除任务">' + icon('x', 14) + '</button>' +
+    '</div>' +
+    '<div class="te-name"><input class="input" data-ptask="' + idx + '" data-pfield="name" value="' + esc(t.name) + '" maxlength="60" placeholder="任务名称，例如：早起慢跑 20 分钟" autocomplete="off"></div>' +
+    '<div class="te-grid">' +
+      '<div class="field te-wide"><label>预计时长（h）</label><div class="te-hours-row"><input class="input" type="number" min="0" step="0.5" data-ptask="' + idx + '" data-pfield="estHours" value="' + esc(fmtHours(t.estHours) === '0' ? '' : fmtHours(t.estHours)) + '" placeholder="0" inputmode="decimal"><span class="te-pts" id="tePts' + idx + '">' + ptsText + '</span></div></div>' +
+      (isWeekly
+        ? '<div class="field te-wide"><label>每周次数</label><div class="te-hours-row"><select class="input" data-ptask="' + idx + '" data-pfield="weeklyTarget">' + countOptions + '</select><span class="te-note">每 7 天为一个周期，达标才获得积分</span></div></div>'
+        : '') +
+      (isPeriod || isWeekly
+        ? '<div class="field te-wide"><label>完成奖励</label><input class="input" data-ptask="' + idx + '" data-pfield="reward" value="' + esc(t.reward) + '" maxlength="80" placeholder="例如：一杯奶茶" autocomplete="off"></div>' +
+          '<div class="te-pair">' +
+            '<div class="field"><label>惩罚方式</label><div class="te-seg te-seg-inline"><button type="button" data-act="pe-penalty-mode" data-idx="' + idx + '" data-mode="text" class="' + (!banMode?'active':'') + '">内容惩罚</button><button type="button" data-act="pe-penalty-mode" data-idx="' + idx + '" data-mode="ban" class="' + (banMode?'active':'') + '">禁止做某事</button></div></div>' +
+            '<div class="field"><label>惩罚内容</label><input class="input" data-ptask="' + idx + '" data-pfield="penalty" value="' + esc(t.penalty) + '" maxlength="80" placeholder="' + (banMode ? '例如：不能看IVL' : '例如：加练1km慢跑') + '" autocomplete="off"></div>' +
+          '</div>'
+        : '<div class="te-pair">' +
+            '<div class="field"><label>完成奖励</label><input class="input" data-ptask="' + idx + '" data-pfield="reward" value="' + esc(t.reward) + '" maxlength="80" placeholder="例如：一杯奶茶" autocomplete="off"></div>' +
+            '<div class="field"><label>未完成惩罚</label><input class="input" data-ptask="' + idx + '" data-pfield="penalty" value="' + esc(t.penalty) + '" maxlength="80" placeholder="例如：加练1km慢跑" autocomplete="off"></div>' +
+          '</div>') +
+      (banMode && isPeriod ? '<div class="field te-wide"><label>禁止时间段</label><div class="range-grid"><input class="input" type="date" data-ptask="' + idx + '" data-pfield="banStart" value="' + esc(banStart) + '"><input class="input" type="date" data-ptask="' + idx + '" data-pfield="banEnd" value="' + esc(banEnd) + '"></div></div>' : '') +
+      (banMode && isWeekly ? '<div class="field te-wide"><label>禁止时间段（结算后下一周）</label><div class="weekday-range"><select class="input" data-ptask="' + idx + '" data-pfield="banWeekStart">' + weekdayOptions(banWeekStart) + '</select><span class="wd-sep">至</span><select class="input" data-ptask="' + idx + '" data-pfield="banWeekEnd">' + weekdayOptions(banWeekEnd) + '</select></div></div>' : '') +
+      (isPeriod ? '<div class="field te-deadline"><label>截止时间</label><input class="input" type="datetime-local" data-ptask="' + idx + '" data-pfield="deadline" value="' + esc(deadline) + '"></div>' : '') +
+    '</div>' +
+    '<div class="hint" style="margin-top:7px">' +
+      (isPeriod
+        ? (banMode ? '未在截止时间前完成，就会在设定的时间段内禁止做这件事，并在每日日程中标注。' : '在截止时间前完成即算成功，过时未完成会记一次惩罚。')
+        : isWeekly
+          ? (banMode ? '从创建日起每 7 天结算一次，打卡未达到设定次数，就在下一周的所选时间段内禁止做这件事，并在每日日程中标注。' : '从创建日起每 7 天结算一次，打卡达到设定次数才算达标并获得积分。')
+          : '每天都需要打卡，完成后按预计时长获得积分。') +
+    '</div>' +
+  '</div>';
+}
+function renderPlanEditor(){
+  const d = state.planDraft;
+  const isEdit = !!state.editingPlanId;
+  const rows = d.tasks.map(taskEditorRow).join('');
+  openModal(
+    '<div class="modal-head"><div><h3>' + (isEdit ? '编辑规划' : '新建规划') + '</h3><p>' + (isEdit ? '调整任务或规划时间，已保存的安排不受影响' : '选一个时间段，列出想在这段时间里完成的事') + '</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="form-grid">' +
+        '<div class="field full"><label>规划名称</label><input class="input" data-planfield="name" value="' + esc(d.name) + '" maxlength="40" placeholder="例如：健康大学生计划" autocomplete="off"></div>' +
+        '<div class="field full"><label>规划时间段</label><div class="range-grid"><input class="input" type="date" data-planfield="start" value="' + esc(d.start) + '"><input class="input" type="date" data-planfield="end" value="' + esc(d.end) + '"></div></div>' +
+      '</div>' +
+      '<div class="divider"></div>' +
+      '<div class="panel-head" style="padding:0"><h3 style="font-size:13px">规划任务</h3><span class="ph-sub">每日任务 / 周期任务 / 节点任务</span></div>' +
+      '<div class="task-editors" id="planEditorRows">' + rows + '</div>' +
+      '<button type="button" class="add-task-btn mt-3" data-act="pe-add-task" style="width:100%">' + icon('plus', 14) + '添加任务</button>' +
+      '<div class="form-error" id="planFormError"></div>' +
+      '<div class="form-note">改名与奖惩修改会同步到该规划内所有历史日程；<b>新增任务从今天开始生效，删除任务从今天起停止</b>，过去的日程保持不变。</div>' +
+    '</div>' +
+    '<div class="modal-foot"><div class="mf-actions"><button class="btn btn-ghost" data-act="modal-close">取消</button><button class="btn btn-primary" data-act="pe-save">' + (isEdit ? '保存修改' : '创建规划') + '</button></div></div>',
+    {wide:true}
+  );
+}
+function refreshPlanEditorRows(){
+  const wrap = $('#planEditorRows');
+  if(!wrap) return;
+  wrap.innerHTML = state.planDraft.tasks.map(taskEditorRow).join('');
+}
+function showPlanError(msg){
+  const el = $('#planFormError');
+  if(!el) { toast(msg, 'terra'); return; }
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function savePlanDraft(){
+  const d = state.planDraft;
+  const name = (d.name || '').trim();
+  const error = $('#planFormError');
+  if(error) error.classList.remove('show');
+  if(!name) return showPlanError('给这个规划起一个名字吧');
+  if(!d.start || !d.end) return showPlanError('请选择规划的起止时间');
+  if(d.start > d.end) return showPlanError('开始日期不能晚于结束日期');
+  if(!d.tasks.length) return showPlanError('至少保留一项任务');
+  for(let i=0; i<d.tasks.length; i++){
+    const t = d.tasks[i];
+    if(!(t.name || '').trim()) return showPlanError('第 ' + (i+1) + ' 项任务还没有名字');
+    if(t.mode === 'weekly'){
+      const wt = Number(t.weeklyTarget) || 3;
+      if(wt < 1 || wt > 7) return showPlanError('第 ' + (i+1) + ' 项周期任务的每周次数需要在 1–7 之间');
+      if(t.penaltyMode === 'ban'){
+        if(!(t.penalty||'').trim()) return showPlanError('第 ' + (i+1) + ' 项任务选择了禁止做某事，请填写禁止的事项');
+        const bs = Number(t.banWeekStart) || 1;
+        const be = Number(t.banWeekEnd) || 3;
+        if(bs > be) return showPlanError('第 ' + (i+1) + ' 项任务的禁止时间段开始星期不能晚于结束星期');
+      }
+    }
+    if(t.mode === 'period'){
+      if(!t.deadline) return showPlanError('第 ' + (i+1) + ' 项节点任务还没有截止时间');
+      const dlKey = t.deadline.slice(0,10);
+      if(dlKey < d.start || dlKey > d.end) return showPlanError('第 ' + (i+1) + ' 项任务的截止时间需要在规划时间段内');
+      if(t.penaltyMode === 'ban'){
+        if(!(t.penalty||'').trim()) return showPlanError('第 ' + (i+1) + ' 项任务选择了禁止做某事，请填写禁止的事项');
+        if(!t.banStart || !t.banEnd) return showPlanError('第 ' + (i+1) + ' 项任务还没有选择禁止时间段');
+        if(t.banStart > t.banEnd) return showPlanError('第 ' + (i+1) + ' 项任务的禁止时间开始日期不能晚于结束日期');
+      }
+    }
+  }
+  const today = todayKey();
+  if(state.editingPlanId){
+    const plan = findPlan(state.editingPlanId);
+    if(!plan) return;
+    plan.name = name;
+    plan.start = d.start;
+    plan.end = d.end;
+    const oldById = new Map(plan.tasks.map(t => [t.id, t]));
+    const draftIds = new Set(d.tasks.map(t => t.id));
+    const finalTasks = [];
+    d.tasks.forEach(t => {
+      const nm = (t.name||'').trim();
+      if(t.isNew){
+        finalTasks.push({
+          id: uid(), name: nm, mode: t.mode,
+          deadline: t.mode === 'period' ? t.deadline : '',
+          weeklyTarget: t.mode === 'weekly' ? clamp(Number(t.weeklyTarget)||3, 1, 7) : 0,
+          banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
+          banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
+          estHours: Math.max(0, Number(t.estHours) || 0),
+          reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+          penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
+          banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
+          banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
+          from: maxKey(today, d.start), to: null, createdAt: new Date().toISOString()
+        });
+      }else{
+        const old = oldById.get(t.id);
+        if(!old) return;
+        let from = old.from || plan.start;
+        if(d.originalStart !== null && old.from === d.originalStart && d.start !== d.originalStart) from = d.start;
+        finalTasks.push(Object.assign({}, old, {
+          name: nm, mode: t.mode,
+          deadline: t.mode === 'period' ? t.deadline : '',
+          weeklyTarget: t.mode === 'weekly' ? clamp(Number(t.weeklyTarget)||3, 1, 7) : 0,
+          banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
+          banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
+          estHours: Math.max(0, Number(t.estHours) || 0),
+          reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+          penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
+          banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
+          banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
+          from
+        }));
+      }
+    });
+    plan.tasks.forEach(t => {
+      if(draftIds.has(t.id)) return;
+      if(t.to){ finalTasks.push(t); return; }
+      if(t.from > today) return;
+      const newTo = addDays(today, -1);
+      if(newTo < t.from) return;
+      finalTasks.push(Object.assign({}, t, {to:newTo}));
+      Object.keys(db.checkins).forEach(date => {
+        if(date > newTo && db.checkins[date] && db.checkins[date].tasks){
+          delete db.checkins[date].tasks[t.id];
+        }
+      });
+    });
+    plan.tasks = finalTasks;
+    saveDB();
+    closeModal();
+    renderView();
+    toast('规划已更新');
+    openPlanDetail(plan.id);
+  }else{
+    const plan = {
+      id: uid(), name, start: d.start, end: d.end,
+      createdAt: new Date().toISOString(), archivedAt: null,
+      tasks: d.tasks.map(t => ({
+        id: uid(), name: (t.name||'').trim(), mode: t.mode,
+        deadline: t.mode === 'period' ? t.deadline : '',
+        weeklyTarget: t.mode === 'weekly' ? clamp(Number(t.weeklyTarget)||3, 1, 7) : 0,
+        banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
+        banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
+        estHours: Math.max(0, Number(t.estHours) || 0),
+        reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+        penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
+        banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
+        banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
+        from: d.start, to: null, createdAt: new Date().toISOString()
+      }))
+    };
+    db.plans.push(plan);
+    saveDB();
+    closeModal();
+    setTab('plans');
+    toast('规划已创建，开始第一天的坚持吧');
+  }
+}
+
+/* ---------------- 归档 ---------------- */
+function archivePlan(planId){
+  const plan = findPlan(planId);
+  if(!plan || plan.archivedAt) return;
+  openConfirm({
+    title: '归档这个规划？',
+    text: '归档后将从明天的日程中停止出现，今天的安排不受影响；所有历史打卡、奖励、惩罚与总结都会完整保留，也可以随时在回顾页查看。',
+    confirmText: '归档',
+    danger: false,
+    onConfirm(){
+      plan.archivedAt = addDays(todayKey(), 1);
+      saveDB();
+      closeModal();
+      renderView();
+      toast('规划已归档');
+    }
+  });
+}
+
+/* ============================================================
+   弹窗与提示
+   ============================================================ */
+const modalRoot = document.getElementById('modal-root');
+const confirmRoot = document.getElementById('confirm-root');
+const toastRoot = document.getElementById('toastRoot');
+
+function openModal(innerHtml, opts){
+  opts = opts || {};
+  const cls = 'modal' + (opts.wide ? ' wide' : '') + (opts.small ? ' small' : '');
+  modalRoot.innerHTML = '<div class="overlay" data-overlay="modal"><div class="' + cls + '" role="dialog" aria-modal="true">' + innerHtml + '</div></div>';
+  document.body.classList.add('lock');
+}
+function closeModal(){
+  modalRoot.innerHTML = '';
+  if(!confirmRoot.innerHTML) document.body.classList.remove('lock');
+}
+let confirmCallback = null;
+function openConfirm(opts){
+  const confirmText = opts.confirmText || '确认';
+  confirmRoot.innerHTML =
+    '<div class="overlay confirm-layer" data-overlay="confirm"><div class="modal small" role="dialog" aria-modal="true">' +
+      '<div class="modal-head"><div><h3>' + esc(opts.title || '确认操作') + '</h3><p>' + esc(opts.text || '') + '</p></div><button class="modal-close" data-act="confirm-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+      '<div class="modal-foot"><div class="mf-actions"><button class="btn btn-ghost" data-act="confirm-close">取消</button><button class="btn ' + (opts.danger ? 'btn-danger-soft' : 'btn-primary') + '" data-act="confirm-ok">' + esc(confirmText) + '</button></div></div>' +
+    '</div></div>';
+  confirmCallback = opts.onConfirm || null;
+  document.body.classList.add('lock');
+}
+function closeConfirm(){
+  confirmRoot.innerHTML = '';
+  confirmCallback = null;
+  if(!modalRoot.innerHTML) document.body.classList.remove('lock');
+}
+function toast(message, tone){
+  const el = document.createElement('div');
+  el.className = 'toast' + (tone === 'terra' ? ' terra' : '');
+  el.innerHTML = '<span class="toast-dot"></span><span>' + esc(message) + '</span>';
+  toastRoot.appendChild(el);
+  while(toastRoot.children.length > 2) toastRoot.removeChild(toastRoot.firstChild);
+  setTimeout(() => {
+    el.classList.add('leaving');
+    setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 200);
+  }, 2800);
+}
+
+/* ============================================================
+   回顾
+   ============================================================ */
+function reviewScopePlans(scope){
+  if(scope !== 'all'){
+    const p = findPlan(scope);
+    if(!p){ state.reviewScope = 'all'; scope = 'all'; }
+  }
+  if(scope === 'all') return db.plans.slice().sort((a,b) => (b.start || '').localeCompare(a.start || ''));
+  return [findPlan(scope)];
+}
+function reviewDistinctDays(plans){
+  const set = new Set();
+  const today = todayKey();
+  plans.forEach(plan => {
+    plan.tasks.forEach(task => {
+      const range = taskRange(plan, task);
+      if(!range) return;
+      const end = minKey(range[1], today);
+      let d = range[0];
+      while(d <= end){
+        const c = db.checkins[d];
+        if(c && c.tasks && c.tasks[task.id] && !isDayTaskRemoved(d, task.id)) set.add(d);
+        d = addDays(d, 1);
+      }
+    });
+  });
+  return set.size;
+}
+function buildReview(scope){
+  const plans = reviewScopePlans(scope);
+  const today = todayKey();
+  let rewards = 0, penalties = 0, points = 0, taskCount = 0;
+  const groups = [];
+  plans.forEach(plan => {
+    const rows = [];
+    plan.tasks.forEach(task => {
+      const m = taskMetrics(plan, task);
+      if(m.state === 'none') return;
+      rows.push({
+        planId: plan.id, taskId: task.id,
+        name: task.name, mode: task.mode, reward: task.reward || '',
+        weeklyTarget: task.mode === 'weekly' ? weeklyTargetOf(task) : 0,
+        penalty: penaltyLabel(task), deadline: task.deadline || '',
+        days: m.days, rewards: m.rewards, penalties: m.penalties,
+        points: m.points, state: m.state
+      });
+      rewards += m.rewards;
+      penalties += m.penalties;
+      points += m.points;
+      taskCount++;
+    });
+    if(rows.length){
+      groups.push({
+        planId: plan.id, name: plan.name, start: plan.start, end: plan.end,
+        archived: !!plan.archivedAt, status: planStatusOf(plan).label, rows
+      });
+    }
+  });
+  const journals = [];
+  Object.keys(db.checkins).sort().reverse().forEach(date => {
+    if(date > today) return;
+    const text = (db.checkins[date].journal || '').trim();
+    if(!text) return;
+    if(scope !== 'all'){
+      const plan = plans[0];
+      const end = minKey(planEndKey(plan), today);
+      if(date < plan.start || date > end) return;
+    }
+    journals.push({date, text});
+  });
+  let scopeLabel = '全部时间';
+  let rangeLabel = '暂无规划记录';
+  if(scope !== 'all'){
+    const plan = plans[0];
+    scopeLabel = plan.name;
+    rangeLabel = plan.start + ' – ' + (plan.archivedAt ? '归档于 ' + plan.archivedAt : plan.end);
+  }else if(plans.length){
+    const starts = plans.map(p => p.start).sort();
+    const ends = plans.map(p => planEndKey(p)).sort();
+    rangeLabel = starts[0] + ' – ' + ends[ends.length - 1];
+  }
+  return {
+    scope, scopeLabel, rangeLabel,
+    groups, journals, planCount: groups.length, taskCount,
+    summary: { days: reviewDistinctDays(plans), rewards, penalties, points }
+  };
+}
+function renderReviewPage(){
+  const r = buildReview(state.reviewScope);
+  const chips = '<div class="review-scope">' +
+    '<button class="scope-chip' + (state.reviewScope === 'all' ? ' active' : '') + '" data-act="review-scope" data-scope="all">全部时间</button>' +
+    db.plans.map(p => '<button class="scope-chip' + (state.reviewScope === p.id ? ' active' : '') + '" data-act="review-scope" data-scope="' + p.id + '">' + esc(p.name) + (p.archivedAt ? ' <span style="opacity:.65">· 归档</span>' : '') + '</button>').join('') +
+  '</div>';
+
+  const hero =
+    '<div class="review-hero">' +
+      '<div class="review-hero-top"><div><h2>' + (r.scope === 'all' ? '全部时间的回顾' : esc(r.scopeLabel)) + '</h2>' +
+        '<div class="rh-sub">' + esc(r.rangeLabel) + ' · ' + r.planCount + ' 个规划 · ' + r.taskCount + ' 项任务</div></div></div>' +
+      '<div class="review-stats">' +
+        '<div class="review-stat"><b>' + r.summary.days + '</b><span>坚持天数</span></div>' +
+        '<div class="review-stat"><b>' + r.summary.rewards + '</b><span>奖励次数</span></div>' +
+        '<div class="review-stat"><b>' + r.summary.penalties + '</b><span>惩罚次数</span></div>' +
+        '<div class="review-stat"><b>' + r.summary.points + '</b><span>获得积分</span></div>' +
+      '</div>' +
+    '</div>';
+
+  const taskPanel =
+    '<section class="card review-panel">' +
+      '<div class="panel-head"><h3>任务坚持</h3><span class="ph-sub">按规划统计</span></div>' +
+      (r.groups.length ? renderReviewGroups(r.groups, true) : '<div class="empty" style="padding:28px 12px"><div class="empty-ic">' + icon('review', 21) + '</div><b>还没有任务记录</b><p>完成打卡后，这里会出现每项任务的坚持、奖励与惩罚。</p></div>') +
+    '</section>';
+
+  const journalPanel =
+    '<section class="card review-panel">' +
+      '<div class="panel-head"><h3>每日总结</h3><span class="ph-sub">' + r.journals.length + ' 篇</span></div>' +
+      (r.journals.length ? '<div class="mt-2">' + r.journals.map(j => {
+        const d = parseKey(j.date);
+        return '<div class="journal-mini">' +
+          '<div class="jm-date"><b>' + d.getDate() + '</b><span>' + (d.getMonth()+1) + '月 · 周' + weekdayShort(j.date) + '</span></div>' +
+          '<div class="jm-text">' + esc(j.text) + '</div>' +
+        '</div>';
+      }).join('') + '</div>' : '<div class="empty" style="padding:28px 12px"><div class="empty-ic">' + icon('book', 21) + '</div><b>还没有写下总结</b><p>在日程的当日总结里写下几句，就会出现在这里。</p></div>') +
+    '</section>';
+
+  const savedHtml = renderSavedReviews();
+
+  return '<div class="page-head"><div><h1>回顾</h1><p class="sub">看看这段时间坚持了什么，也看看写下的日子</p></div>' +
+      '<div class="page-actions"><button class="btn btn-primary" data-act="save-review">' + icon('bookmark', 15) + '保存回顾</button></div>' +
+    '</div>' + chips + hero +
+    '<div class="review-body">' + taskPanel + journalPanel + '</div>' + savedHtml;
+}
+function renderReviewGroups(groups, interactive){
+  return '<div class="stat-table-head"><span>任务</span><span>坚持天数</span><span>奖励</span><span>惩罚</span></div>' +
+    groups.map(g => {
+      const rows = g.rows.map(row => {
+        const bits = [taskModeLabel(row.mode)];
+        if(row.mode === 'period' && row.deadline) bits.push('截止 ' + fmtDateTime(row.deadline));
+        if(row.mode === 'weekly') bits.push('每周 ' + (row.weeklyTarget || 3) + ' 次');
+        if(row.reward) bits.push('奖励：' + row.reward);
+        if(row.penalty) bits.push('惩罚：' + row.penalty);
+        const sub = bits.join(' · ');
+        const canOpen = interactive && row.planId && row.taskId;
+        const metricCell = (kind, value) =>
+          canOpen
+            ? '<button type="button" class="sr-num clickable' + (value ? '' : ' zero') + '" data-act="review-metric" data-kind="' + kind + '" data-plan="' + row.planId + '" data-task="' + row.taskId + '" title="查看' + (kind === 'reward' ? '奖励' : '惩罚') + '记录">' + value + '</button>'
+            : '<div class="sr-num' + (value ? '' : ' zero') + '">' + value + '</div>';
+        return '<div class="stat-row">' +
+          '<div class="sr-name">' +
+            '<div class="srn-main">' + esc(row.name) + '<span class="tag ' + taskModeClass(row.mode) + '">' + taskModeShort(row.mode) + '</span></div>' +
+            '<div class="srn-sub" title="' + esc(sub) + '">' + esc(sub) + '</div>' +
+          '</div>' +
+          '<div class="sr-num' + (row.days ? '' : ' zero') + '">' + row.days + '<small>天</small></div>' +
+          metricCell('reward', row.rewards) +
+          metricCell('penalty', row.penalties) +
+        '</div>';
+      }).join('');
+      return '<div class="stat-group">' +
+        '<div class="stat-group-title">' + esc(g.name) + '<span class="sgt-date">' + esc(g.start) + ' – ' + esc(g.end) + ' · ' + esc(g.status) + '</span></div>' +
+        rows +
+      '</div>';
+    }).join('');
+}
+function metricEvents(plan, task, kind){
+  const range = taskRange(plan, task);
+  if(!range) return [];
+  const out = [];
+  if(task.mode === 'weekly'){
+    const settlements = weeklyTaskSettlements(plan.id, task.id);
+    settlements.forEach(s => {
+      if(kind === 'reward' && s.success){
+        out.push({date: s.checkDate, note: '结算 ' + fmtMD(s.cycleEnd) + ' 那周 · ' + s.checked + '/' + s.target + ' 次达标' + (Number(s.pts) ? ' · +' + s.pts + ' 积分' : '')});
+      }
+      if(kind === 'penalty' && !s.success){
+        out.push({date: s.checkDate, note: '结算 ' + fmtMD(s.cycleEnd) + ' 那周 · 仅 ' + s.checked + '/' + s.target + ' 次' + (s.banFrom ? ' · 禁止期 ' + fmtMD(s.banFrom) + ' – ' + fmtMD(s.banTo) : '')});
+      }
+    });
+    return out;
+  }
+  if(task.mode === 'period'){
+    if(kind === 'reward'){
+      const comp = periodCompletion(plan, task);
+      if(comp) out.push({date: comp.date, note:'截止前完成'});
+    }else if(periodFailed(plan, task)){
+      const note = task.penaltyMode === 'ban' && task.banStart && task.banEnd
+        ? '已错过截止 · 禁止期 ' + fmtMD(task.banStart) + ' – ' + fmtMD(task.banEnd)
+        : '已错过截止';
+      out.push({date: task.deadline.slice(0,10), note});
+    }
+    return out;
+  }
+  const today = todayKey();
+  const end = kind === 'reward' ? minKey(range[1], today) : minKey(range[1], addDays(today, -1));
+  let d = range[0];
+  while(d <= end){
+    if(!isDayTaskRemoved(d, task.id)){
+      const checked = isTaskChecked(d, task.id);
+      if(kind === 'reward' && checked) out.push({date: d, note:'已完成'});
+      if(kind === 'penalty' && !checked) out.push({date: d, note:'未完成'});
+    }
+    d = addDays(d, 1);
+  }
+  return out;
+}
+function openReviewMetric(planId, taskId, kind){
+  const plan = db.plans.find(p => p.id === planId);
+  const task = plan && plan.tasks.find(t => t.id === taskId);
+  if(!task){ toast('没有找到这条任务'); return; }
+  const isReward = kind === 'reward';
+  const events = metricEvents(plan, task, kind);
+  const content = (isReward ? task.reward : penaltyLabel(task)) || (isReward ? '未设置奖励内容' : '未设置惩罚内容');
+  openModal(
+    '<div class="modal-head"><div><h3>' + (isReward ? '奖励记录' : '惩罚记录') + '</h3><p>' + esc(plan.name) + ' · ' + esc(task.name) + '</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="metric-content"><span>' + (isReward ? '奖励内容' : '惩罚内容') + '</span><b>' + esc(content) + '</b></div>' +
+      '<div class="metric-count">共 <b>' + events.length + '</b> 次 · ' + taskModeLabel(task.mode) + '</div>' +
+      (events.length
+        ? '<div class="metric-list">' + events.map(ev => '<div class="metric-event"><span>' + fmtMD(ev.date) + ' · ' + weekdayCN(ev.date) + '</span><em>' + ev.note + '</em></div>').join('') + '</div>'
+        : '<div class="metric-empty">暂无记录</div>') +
+    '</div>' +
+    '<div class="modal-foot"><div class="mf-note">记录会随打卡调整实时更新</div><div class="mf-actions"><button class="btn btn-ghost" data-act="modal-close">关闭</button></div></div>'
+  );
+}
+function renderSavedReviews(){
+  const saved = db.savedReviews;
+  return '<section class="saved-section">' +
+    '<div class="saved-head"><h2>已保存的回顾</h2><span class="ph-sub">' + (saved.length ? saved.length + ' 份' : '尚未保存') + '</span></div>' +
+    (saved.length ? '<div class="saved-grid">' + saved.map(s =>
+      '<div class="saved-card card" data-act="view-saved" data-saved="' + s.id + '" style="cursor:pointer">' +
+        '<div class="sc-main">' +
+          '<div class="sc-title">' + esc(s.title) + '</div>' +
+          '<div class="sc-sub">' + esc(s.scopeLabel) + ' · 坚持 ' + s.summary.days + ' 天 · 奖励 ' + s.summary.rewards + ' · 惩罚 ' + s.summary.penalties + '</div>' +
+        '</div>' +
+        '<div class="sc-actions">' +
+          '<button class="btn-icon" data-act="download-saved" data-saved="' + s.id + '" title="下载文本">' + icon('download', 15) + '</button>' +
+          '<button class="btn-icon" data-act="delete-saved" data-saved="' + s.id + '" title="删除">' + icon('trash', 15) + '</button>' +
+        '</div>' +
+      '</div>'
+    ).join('') + '</div>' : '<div class="card empty" style="padding:24px;flex-direction:row;text-align:left;gap:10px"><div class="empty-ic" style="margin:0">' + icon('bookmark', 19) + '</div><p>点右上角「保存回顾」，就能把这一段时间的经历与总结留在这里。</p></div>') +
+  '</section>';
+}
+function saveCurrentReview(){
+  const r = buildReview(state.reviewScope);
+  if(!r.summary.days && !r.journals.length){
+    toast('这段时间还没有可保存的记录');
+    return;
+  }
+  const snapshot = {
+    id: uid(),
+    title: fmtMD(todayKey()) + ' · ' + r.scopeLabel,
+    scope: r.scope,
+    scopeLabel: r.scopeLabel,
+    rangeLabel: r.rangeLabel,
+    createdAt: new Date().toISOString(),
+    summary: Object.assign({}, r.summary),
+    groups: r.groups.map(g => ({
+      name: g.name, start: g.start, end: g.end, archived: g.archived,
+      status: g.status, rows: g.rows.map(row => Object.assign({}, row))
+    })),
+    journals: r.journals.map(j => ({date: j.date, text: j.text}))
+  };
+  db.savedReviews.unshift(snapshot);
+  saveDB();
+  renderView();
+  toast('回顾已保存，可随时回看或导出');
+}
+function savedReviewHTML(s){
+  return '<div class="saved-report-head"><h3>' + esc(s.title) + '</h3><p>' + esc(s.scopeLabel) + ' · ' + esc(s.rangeLabel) + ' · 保存于 ' + fmtStamp(s.createdAt) + '</p></div>' +
+    '<div class="review-stats" style="margin-top:0">' +
+      '<div class="review-stat"><b>' + s.summary.days + '</b><span>坚持天数</span></div>' +
+      '<div class="review-stat"><b>' + s.summary.rewards + '</b><span>奖励次数</span></div>' +
+      '<div class="review-stat"><b>' + s.summary.penalties + '</b><span>惩罚次数</span></div>' +
+      '<div class="review-stat"><b>' + s.summary.points + '</b><span>获得积分</span></div>' +
+    '</div>' +
+    '<div class="detail-section-title">任务明细</div>' +
+    (s.groups.length ? renderReviewGroups(s.groups) : '<p class="muted-text">暂无任务记录</p>') +
+    '<div class="detail-section-title">每日总结</div>' +
+    (s.journals.length ? s.journals.map(j => {
+      const d = parseKey(j.date);
+      return '<div class="journal-mini"><div class="jm-date"><b>' + d.getDate() + '</b><span>' + (d.getMonth()+1) + '月</span></div><div class="jm-text">' + esc(j.text) + '</div></div>';
+    }).join('') : '<p class="muted-text">暂无总结</p>');
+}
+function openSavedReview(id){
+  const s = db.savedReviews.find(x => x.id === id);
+  if(!s) return;
+  openModal(
+    '<div class="modal-head"><div><h3>回顾报告</h3><p>' + fmtStamp(s.createdAt) + '</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' + savedReviewHTML(s) + '</div>' +
+    '<div class="modal-foot"><div class="mf-note">已保存的回顾不会随之后的修改而变化</div><div class="mf-actions"><button class="btn btn-ghost" data-act="download-saved" data-saved="' + s.id + '">' + icon('download', 14) + '导出文本</button><button class="btn btn-primary" data-act="modal-close">关闭</button></div></div>',
+    {wide:true}
+  );
+}
+function downloadSavedReview(id){
+  const s = db.savedReviews.find(x => x.id === id);
+  if(!s) return;
+  const lines = [];
+  lines.push('自律人格 · 回顾报告');
+  lines.push('范围：' + s.scopeLabel + '（' + s.rangeLabel + '）');
+  lines.push('保存时间：' + fmtStamp(s.createdAt));
+  lines.push('坚持天数：' + s.summary.days + ' 天');
+  lines.push('奖励次数：' + s.summary.rewards + ' 次');
+  lines.push('惩罚次数：' + s.summary.penalties + ' 次');
+  lines.push('获得积分：' + s.summary.points);
+  lines.push('');
+  lines.push('—— 任务明细 ——');
+  s.groups.forEach(g => {
+    lines.push('');
+    lines.push(g.name + '（' + g.start + ' – ' + g.end + '，' + g.status + '）');
+    g.rows.forEach(row => {
+      lines.push('· ' + row.name + '（' + taskModeShort(row.mode) + '）：坚持 ' + row.days + ' 天，奖励 ' + row.rewards + ' 次，惩罚 ' + row.penalties + ' 次');
+      if(row.reward) lines.push('  奖励内容：' + row.reward);
+      if(row.penalty) lines.push('  惩罚内容：' + row.penalty);
+    });
+  });
+  lines.push('');
+  lines.push('—— 每日总结 ——');
+  if(s.journals.length){
+    s.journals.forEach(j => {
+      lines.push('');
+      lines.push(j.date);
+      lines.push(j.text);
+    });
+  }else{
+    lines.push('这段时间还没有写下总结。');
+  }
+  const text = '\uFEFF' + lines.join('\r\n');
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '自律人格回顾_' + s.createdAt.slice(0,10) + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  toast('回顾文本已导出');
+}
+
+/* ============================================================
+   商城
+   ============================================================ */
+function renderStorePage(){
+  const bal = balancePoints();
+  const earned = earnedPoints();
+  const spent = spentPoints();
+  const active = db.wishes.filter(w => !w.redeemedAt);
+  const redeemed = db.wishes.filter(w => w.redeemedAt).sort((a,b) => (b.redeemedAt || '').localeCompare(a.redeemedAt || ''));
+  const wishCards = active.length ? active.map(w => {
+    const cost = Number(w.cost) || 0;
+    const pct = clamp(Math.round(bal / Math.max(cost,1) * 100), 0, 100);
+    const can = bal >= cost;
+    return '<div class="wish-card card">' +
+      '<div class="wish-top"><div><div class="wish-name">' + esc(w.name) + '</div>' + (w.note ? '<div class="wish-note">' + esc(w.note) + '</div>' : '') + '</div>' +
+        '<div class="wish-acts">' +
+          '<button class="wish-edit" data-act="edit-wish" data-wish="' + w.id + '" title="编辑愿望" aria-label="编辑愿望">' + icon('edit', 13) + '</button>' +
+          '<button class="wish-del" data-act="delete-wish" data-wish="' + w.id + '" title="删除愿望" aria-label="删除愿望">' + icon('x', 14) + '</button>' +
+        '</div></div>' +
+      '<div class="wish-bottom"><div>' +
+        '<div class="wish-cost">' + cost + '<small>积分</small></div>' +
+        '<div class="wish-progress"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="wish-status">' + (can ? '积分已足够' : '还差 ' + (cost - bal) + ' 积分') + '</div>' +
+      '</div>' +
+      (can
+        ? '<button class="btn btn-primary btn-sm" data-act="redeem-wish" data-wish="' + w.id + '">兑换</button>'
+        : '<button class="btn btn-ghost btn-sm" disabled>积分不足</button>') +
+      '</div>' +
+    '</div>';
+  }).join('') : '<div class="card empty" style="padding:34px 22px;grid-column:1/-1"><div class="empty-ic">' + icon('store', 22) + '</div><b>愿望清单还是空的</b><p>把想犒劳自己的事写下来，积分够了就来兑换。</p><button class="btn btn-primary mt-3" data-act="add-wish">' + icon('plus', 15) + '添加愿望</button></div>';
+
+  const redeemedHtml = redeemed.length ? '<div class="wish-head" style="margin-top:26px"><div><h2>已兑换</h2><div class="wh-sub">用坚持换来的小奖励</div></div></div>' +
+    '<div class="card panel" style="padding:10px 18px"><div class="redeemed-list">' + redeemed.map(w =>
+      '<div class="redeemed-row"><span class="rr-name">' + esc(w.name) + '</span><span class="rr-cost">-' + w.cost + '</span><span class="rr-date">' + fmtStamp(w.redeemedAt) + '</span></div>'
+    ).join('') + '</div></div>' : '';
+
+  return '<div class="page-head"><div><h1>商城</h1><p class="sub">让坚持有一点看得见的回报</p></div>' +
+      '<div class="page-actions"><button class="btn btn-primary" data-act="add-wish">' + icon('plus', 15) + '添加愿望</button></div>' +
+    '</div>' +
+    '<div class="wallet">' +
+      '<div><div class="wallet-label">可用积分</div><div class="wallet-value"><b>' + bal + '</b><span>积分</span></div>' +
+        '<div class="wallet-note">完成任务按时长获得积分 · 每小时 10 积分<br>累计获得 ' + earned + ' · 已使用 ' + spent + '</div></div>' +
+      '<div class="wallet-mark">' + icon('spark', 26) + '</div>' +
+    '</div>' +
+    '<div class="wish-head"><div><h2>愿望清单</h2><div class="wh-sub">积分达标后即可兑换</div></div></div>' +
+    '<div class="wish-grid">' + wishCards + '</div>' +
+    redeemedHtml;
+}
+function openWishEditor(wishId){
+  const wish = wishId ? db.wishes.find(w => w.id === wishId) : null;
+  const editing = !!wish;
+  state.editingWishId = editing ? wish.id : null;
+  openModal(
+    '<div class="modal-head"><div><h3>' + (editing ? '编辑愿望' : '添加一个愿望') + '</h3><p>' + (editing ? '调整名称、积分或备注' : '给坚持留一点期待') + '</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="form-grid">' +
+        '<div class="field full"><label>愿望</label><input class="input" id="wishName" maxlength="40" value="' + esc(editing ? wish.name : '') + '" placeholder="例如：周末去看一场电影" autocomplete="off"></div>' +
+        '<div class="field full"><label>需要积分</label><input class="input" id="wishCost" type="number" min="1" step="10" value="' + (editing ? (Number(wish.cost) || '') : '') + '" placeholder="例如：60" inputmode="numeric"></div>' +
+        '<div class="field full"><label>备注（可选）</label><input class="input" id="wishNote" maxlength="80" value="' + esc(editing ? (wish.note || '') : '') + '" placeholder="想对它说的一句话" autocomplete="off"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="modal-foot"><div class="mf-note">积分来自每日、周期与节点任务的完成</div><div class="mf-actions"><button class="btn btn-ghost" data-act="modal-close">取消</button><button class="btn btn-primary" data-act="wish-save">' + (editing ? '保存修改' : '添加愿望') + '</button></div></div>'
+  );
+}
+function saveWish(){
+  const name = ($('#wishName') && $('#wishName').value || '').trim();
+  const cost = parseInt(($('#wishCost') && $('#wishCost').value) || '0', 10);
+  const note = ($('#wishNote') && $('#wishNote').value || '').trim();
+  if(!name){ toast('先写下这个愿望是什么'); return; }
+  if(!cost || cost <= 0){ toast('给这个愿望设置一个积分价格'); return; }
+  const editingId = state.editingWishId;
+  const wish = editingId ? db.wishes.find(w => w.id === editingId) : null;
+  state.editingWishId = null;
+  if(wish){
+    wish.name = name;
+    wish.cost = cost;
+    wish.note = note;
+    wish.updatedAt = new Date().toISOString();
+    saveDB();
+    closeModal();
+    renderView();
+    toast('愿望已更新');
+    return;
+  }
+  db.wishes.push({
+    id: uid(), name, cost, note,
+    createdAt: new Date().toISOString(), redeemedAt: null
+  });
+  saveDB();
+  closeModal();
+  renderView();
+  toast('愿望已加入清单');
+}
+function redeemWish(wishId){
+  const wish = db.wishes.find(w => w.id === wishId);
+  if(!wish || wish.redeemedAt) return;
+  const bal = balancePoints();
+  if(bal < wish.cost){ toast('积分还不够，再坚持几天吧', 'terra'); return; }
+  openConfirm({
+    title: '兑换「' + wish.name + '」',
+    text: '将消耗 ' + wish.cost + ' 积分，兑换后余额为 ' + (bal - wish.cost) + ' 积分。',
+    confirmText: '确认兑换',
+    onConfirm(){
+      const cur = balancePoints();
+      if(cur < wish.cost){ toast('积分不足，暂时无法兑换', 'terra'); return; }
+      const at = new Date().toISOString();
+      wish.redeemedAt = at;
+      db.redemptions.push({ id: uid(), wishId: wish.id, name: wish.name, cost: wish.cost, at });
+      saveDB();
+      renderView();
+      toast('已兑换：' + wish.name);
+    }
+  });
+}
+function deleteWish(wishId){
+  const wish = db.wishes.find(w => w.id === wishId);
+  if(!wish) return;
+  openConfirm({
+    title: '删除这个愿望？',
+    text: '「' + wish.name + '」会从愿望清单中移除。',
+    confirmText: '删除',
+    danger: true,
+    onConfirm(){
+      db.wishes = db.wishes.filter(w => w.id !== wishId);
+      saveDB();
+      renderView();
+      toast('已删除愿望');
+    }
+  });
+}
+
+/* ============================================================
+   全局事件与启动
+   ============================================================ */
+const CAL_ACTS = new Set([
+  'cal-view','day-prev','day-next','day-today','month-prev','month-next','month-today',
+  'year-prev','year-next','year-today','goto-day','goto-month','toggle-task',
+  'remove-day-task','toggle-extra','remove-extra'
+]);
+function handleGlobalAction(el){
+  const act = el.getAttribute('data-act');
+  if(!act) return;
+  if(CAL_ACTS.has(act)){ handleAction(act, el); return; }
+  switch(act){
+    case 'new-plan': openPlanEditor(null); break;
+    case 'view-plan': openPlanDetail(el.getAttribute('data-plan')); break;
+    case 'edit-plan': openPlanEditor(el.getAttribute('data-plan')); break;
+    case 'archive-plan': archivePlan(el.getAttribute('data-plan')); break;
+    case 'plan-review': {
+      const id = el.getAttribute('data-plan');
+      closeModal();
+      state.reviewScope = id;
+      setTab('review');
+      break;
+    }
+    case 'modal-close': closeModal(); break;
+    case 'confirm-close': closeConfirm(); break;
+    case 'confirm-ok': {
+      const cb = confirmCallback;
+      closeConfirm();
+      if(cb) cb();
+      break;
+    }
+    case 'pe-mode': {
+      const d = state.planDraft;
+      if(!d) break;
+      const idx = Number(el.getAttribute('data-idx'));
+      const task = d.tasks[idx];
+      if(!task) break;
+      task.mode = el.getAttribute('data-mode');
+      if(task.mode === 'period' && !task.deadline) task.deadline = d.end + 'T18:00';
+      if(task.mode === 'weekly'){
+        if(!task.weeklyTarget) task.weeklyTarget = 3;
+        if(!task.banWeekStart) task.banWeekStart = 1;
+        if(!task.banWeekEnd) task.banWeekEnd = 3;
+      }
+      refreshPlanEditorRows();
+      break;
+    }
+    case 'pe-penalty-mode': {
+      const d = state.planDraft;
+      const idx = Number(el.getAttribute('data-idx'));
+      const task = d.tasks[idx];
+      if(!task) break;
+      task.penaltyMode = el.getAttribute('data-mode') === 'ban' ? 'ban' : 'text';
+      if(task.penaltyMode === 'ban' && task.mode === 'period'){
+        const base = task.deadline ? task.deadline.slice(0,10) : d.end;
+        if(!task.banStart) task.banStart = base;
+        if(!task.banEnd) task.banEnd = addDays(task.banStart, 2);
+      }
+      refreshPlanEditorRows();
+      break;
+    }
+    case 'pe-add-task': {
+      const d = state.planDraft;
+      if(!d) break;
+      d.tasks.push(blankTask());
+      refreshPlanEditorRows();
+      const rows = $$('#planEditorRows .task-editor');
+      const last = rows[rows.length - 1];
+      if(last){
+        last.scrollIntoView({block:'nearest', behavior:'smooth'});
+        const inp = last.querySelector('input');
+        if(inp) inp.focus();
+      }
+      break;
+    }
+    case 'pe-remove-task': {
+      const d = state.planDraft;
+      if(!d) break;
+      d.tasks.splice(Number(el.getAttribute('data-idx')), 1);
+      refreshPlanEditorRows();
+      break;
+    }
+    case 'pe-save': savePlanDraft(); break;
+    case 'review-scope': state.reviewScope = el.getAttribute('data-scope'); renderView(); break;
+    case 'save-review': saveCurrentReview(); break;
+    case 'review-metric':
+      openReviewMetric(el.getAttribute('data-plan'), el.getAttribute('data-task'), el.getAttribute('data-kind'));
+      break;
+    case 'view-saved': openSavedReview(el.getAttribute('data-saved')); break;
+    case 'download-saved': downloadSavedReview(el.getAttribute('data-saved')); break;
+    case 'delete-saved': {
+      const id = el.getAttribute('data-saved');
+      const saved = db.savedReviews.find(s => s.id === id);
+      if(!saved) break;
+      openConfirm({
+        title: '删除这份回顾？',
+        text: '删除后无法恢复，但不会影响打卡记录与积分。',
+        confirmText: '删除',
+        danger: true,
+        onConfirm(){
+          db.savedReviews = db.savedReviews.filter(s => s.id !== id);
+          saveDB();
+          closeModal();
+          renderView();
+          toast('已删除保存的回顾');
+        }
+      });
+      break;
+    }
+    case 'add-wish': openWishEditor(); break;
+    case 'edit-wish': openWishEditor(el.getAttribute('data-wish')); break;
+    case 'wish-save': saveWish(); break;
+    case 'redeem-wish': redeemWish(el.getAttribute('data-wish')); break;
+    case 'delete-wish': deleteWish(el.getAttribute('data-wish')); break;
+  }
+}
+
+function bindEvents(){
+  document.addEventListener('click', e => {
+    const overlay = e.target.closest('.overlay[data-overlay]');
+    if(overlay && e.target === overlay){
+      if(overlay.getAttribute('data-overlay') === 'confirm') closeConfirm();
+      else closeModal();
+      return;
+    }
+    const tabEl = e.target.closest('[data-tab]');
+    if(tabEl){
+      const tab = tabEl.getAttribute('data-tab');
+      if(tab){ setTab(tab); }
+      return;
+    }
+    const actEl = e.target.closest('[data-act]');
+    if(actEl){
+      if(actEl.hasAttribute('disabled')) return;
+      e.preventDefault();
+      handleGlobalAction(actEl);
+    }
+  });
+  document.addEventListener('submit', e => {
+    const form = e.target;
+    if(form && form.getAttribute('data-form') === 'extra'){
+      e.preventDefault();
+      handleExtraForm(form);
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+      if(confirmRoot.innerHTML){ closeConfirm(); return; }
+      if(modalRoot.innerHTML){ closeModal(); return; }
+    }
+    if((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('plan-card')){
+      e.preventDefault();
+      openPlanDetail(e.target.getAttribute('data-plan'));
+    }
+  });
+  const handleModalField = e => {
+    if(!state.planDraft) return;
+    const t = e.target;
+    if(!modalRoot.contains(t)) return;
+    if(t.hasAttribute('data-planfield')){
+      state.planDraft[t.getAttribute('data-planfield')] = t.value;
+      return;
+    }
+    if(t.hasAttribute('data-ptask') && t.hasAttribute('data-pfield')){
+      const idx = Number(t.getAttribute('data-ptask'));
+      const field = t.getAttribute('data-pfield');
+      const task = state.planDraft.tasks[idx];
+      if(!task) return;
+      task[field] = t.value;
+      if(field === 'estHours'){
+        const p = document.getElementById('tePts' + idx);
+        if(p) p.textContent = (task.mode === 'weekly' ? '达标 +' : '+') + pointsForHours(t.value) + ' 积分';
+      }
+    }
+  };
+  modalRoot.addEventListener('input', handleModalField);
+  modalRoot.addEventListener('change', handleModalField);
+}
+
+/* ---------------- 启动 ---------------- */
+db = loadDB();
+saveDB();
+renderShell();
+renderView();
+bindEvents();
+})();
+</script>
+</body>
+</html>

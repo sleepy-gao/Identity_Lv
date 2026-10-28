@@ -1257,27 +1257,32 @@ function dailyMissedDays(plan, task){
   }
   return n;
 }
+function planDayItems(plan, date){
+  const items = [];
+  if(plan.archivedAt && date >= plan.archivedAt) return items;
+  plan.tasks.forEach(task => {
+    const range = taskRange(plan, task);
+    if(!rangeHas(range, date)) return;
+    if(isDayTaskRemoved(date, task.id)) return;
+    if(task.mode === 'daily'){
+      items.push({ plan, task, checked: isTaskChecked(date, task.id) });
+      return;
+    }
+    if(task.mode === 'weekly'){
+      if(isTaskChecked(date, task.id)) items.push({ plan, task, checked:true });
+      return;
+    }
+    if(task.mode === 'period'){
+      const comp = periodCompletion(plan, task);
+      if(comp && comp.date === date) items.push({ plan, task, checked:true });
+    }
+  });
+  return items;
+}
 function dayDailyItems(date){
   const items = [];
   db.plans.forEach(plan => {
-    if(plan.archivedAt && date >= plan.archivedAt) return;
-    plan.tasks.forEach(task => {
-      const range = taskRange(plan, task);
-      if(!rangeHas(range, date)) return;
-      if(isDayTaskRemoved(date, task.id)) return;
-      if(task.mode === 'daily'){
-        items.push({ kind:'plan', plan, task, checked: isTaskChecked(date, task.id) });
-        return;
-      }
-      if(task.mode === 'weekly'){
-        if(isTaskChecked(date, task.id)) items.push({ kind:'plan', plan, task, checked:true });
-        return;
-      }
-      if(task.mode === 'period'){
-        const comp = periodCompletion(plan, task);
-        if(comp && comp.date === date) items.push({ kind:'plan', plan, task, checked:true });
-      }
-    });
+    planDayItems(plan, date).forEach(it => items.push({ kind:'plan', plan:it.plan, task:it.task, checked:it.checked }));
   });
   const c = db.checkins[date];
   if(c && c.extras){
@@ -2117,13 +2122,13 @@ function renderPlanCard(plan){
   const met = planMetrics(plan);
   const today = todayKey();
   const allActive = plan.tasks.filter(t => !t.to);
-  const dailyToday = plan.tasks.filter(t => t.mode === 'daily' && rangeHas(taskRange(plan,t), today) && !isDayTaskRemoved(today,t.id));
-  const doneToday = dailyToday.filter(t => isTaskChecked(today, t.id)).length;
-  let todayState = '今日 ' + doneToday + '/' + dailyToday.length;
+  const todayItems = planDayItems(plan, today);
+  const doneToday = todayItems.filter(t => t.checked).length;
+  let todayState = '今日 ' + doneToday + '/' + todayItems.length;
   if(status.key === 'future') todayState = '尚未开始';
   else if(status.key === 'archived') todayState = '历史已保留';
   else if(status.key === 'ended') todayState = '已结束';
-  else if(!dailyToday.length) todayState = '今日无每日任务';
+  else if(!todayItems.length) todayState = '今日无任务';
 
   const chips = allActive.slice(0, 4).map(t =>
     '<span class="plan-chip' + (t.mode === 'period' ? ' period' : t.mode === 'weekly' ? ' weekly' : '') + '"><i></i><span>' + esc(t.name) + '</span></span>'
@@ -2138,7 +2143,7 @@ function renderPlanCard(plan){
     '<div class="plan-mini-stats">' +
       '<div><b>' + met.completedDays + '</b><span>坚持天数</span></div>' +
       '<div><b>' + allActive.length + '</b><span>任务</span></div>' +
-      '<div><b>' + doneToday + '<span style="font-size:11px;color:#aab6ab">/</span>' + dailyToday.length + '</b><span>今日完成</span></div>' +
+      '<div><b>' + doneToday + '<span style="font-size:11px;color:#aab6ab">/</span>' + todayItems.length + '</b><span>今日完成</span></div>' +
     '</div>' +
     '<div class="plan-task-chips">' + (chips || '<span class="plan-chip more">暂无任务</span>') + more + '</div>' +
     '<div class="plan-card-foot">' +

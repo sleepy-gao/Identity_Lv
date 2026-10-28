@@ -350,6 +350,14 @@ svg{display:block}
 .trow:hover .t-remove{opacity:1}
 .t-remove:hover{background:var(--terra-soft);color:var(--terra)}
 @media (hover:none){.t-remove{opacity:.65}}
+.t-undo{
+  width:23px;height:23px;border-radius:6px;display:grid;place-items:center;
+  color:#b6c2b7;opacity:0;transition:opacity .14s,background .14s,color .14s;
+  font-size:15px;line-height:1;padding-bottom:1px;
+}
+.trow:hover .t-undo{opacity:1}
+.t-undo:hover{background:var(--green-tint);color:var(--green-deep)}
+@media (hover:none){.t-undo{opacity:.65}}
 
 .extra-add{margin:10px 2px 2px;padding-top:12px;border-top:1px dashed #e3ebe1}
 .extra-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1065,6 +1073,12 @@ function isTaskChecked(date, taskId){
   const c = db.checkins[date];
   return !!(c && c.tasks && c.tasks[taskId]);
 }
+function taskDayCount(date, taskId){
+  const c = db.checkins[date];
+  const rec = c && c.tasks && c.tasks[taskId];
+  if(!rec) return 0;
+  return Math.max(1, Number(rec.count) || 1);
+}
 function periodCompletion(plan, task){
   if(!task.deadline) return null;
   const range = taskRange(plan, task);
@@ -1106,7 +1120,7 @@ function weeklyCycleAt(task, date){
 function weeklyCheckedCount(task, start, end){
   let n = 0, d = start;
   while(d <= end){
-    if(!isDayTaskRemoved(d, task.id) && isTaskChecked(d, task.id)) n++;
+    if(!isDayTaskRemoved(d, task.id)) n += taskDayCount(d, task.id);
     d = addDays(d, 1);
   }
   return n;
@@ -1630,6 +1644,7 @@ function renderPlanTaskRow(date, plan, task, today){
     const cycleEnd = cycle ? cycle.end : date;
     const target = weeklyTargetOf(task);
     const cnt = weeklyCheckedCount(task, cycleStart, cycleEnd);
+    const dayCount = taskDayCount(date, task.id);
     const settled = weeklySettlementFor(task, cycleStart);
     meta += '<span class="tag tag-weekly">周期</span>';
     meta += '<span class="t-sub muted" style="margin-top:0">每周 ' + target + ' 次 · 本周 ' + cnt + '/' + target + '</span>';
@@ -1644,7 +1659,7 @@ function renderPlanTaskRow(date, plan, task, today){
         pts = 0;
       }
     }else{
-      sub = (checked ? '本期已打卡 · ' : '') + '本周 ' + cnt + '/' + target;
+      sub = (dayCount ? '今日已完成 ' + dayCount + ' 次 ' : '') ;
       if(cnt >= target) sub += ' · 已达标，等待结算';
       else if(task.reward) sub += ' · 达标后：' + esc(task.reward);
       subClass = 'muted';
@@ -1669,7 +1684,11 @@ function renderPlanTaskRow(date, plan, task, today){
     }
   }
 
-  const checkBtn = '<button class="check' + (checked?' checked':'') + (disabled?' disabled':'') + '" data-act="toggle-task" data-date="' + date + '" data-task="' + task.id + '" aria-label="' + (checked?'取消打卡':'完成打卡') + '">' + icon('check', 12) + '</button>';
+  const checkLabel = isWeekly ? (checked ? '再完成一次' : '完成打卡') : (checked?'取消打卡':'完成打卡');
+  const checkBtn = '<button class="check' + (checked?' checked':'') + (disabled?' disabled':'') + '" data-act="toggle-task" data-date="' + date + '" data-task="' + task.id + '" aria-label="' + checkLabel + '">' + icon('check', 12) + '</button>';
+  const undoBtn = isWeekly && checked && !disabled
+    ? '<button class="t-undo" data-act="undo-weekly" data-date="' + date + '" data-task="' + task.id + '" title="撤销一次打卡" aria-label="撤销一次打卡">−</button>'
+    : '';
   const removeBtn =
     '<button class="t-remove" data-act="remove-day-task" data-date="' + date + '" data-task="' + task.id + '" title="从当天日程移除" aria-label="从当天日程移除">' + icon('x', 13) + '</button>';
   const ptsHtml = pts > 0 ? '<span class="pts-badge">+' + pts + '</span>' : '<span class="pts-badge zero"></span>';
@@ -1681,7 +1700,7 @@ function renderPlanTaskRow(date, plan, task, today){
       '<div class="t-meta">' + meta + '</div>' +
       (sub ? '<div class="t-sub ' + subClass + '">' + sub + '</div>' : '') +
     '</div>' +
-    '<div class="t-side">' + ptsHtml + removeBtn + '</div>' +
+    '<div class="t-side">' + undoBtn + ptsHtml + removeBtn + '</div>' +
   '</div>';
 }
 
@@ -1801,7 +1820,7 @@ function renderYearView(){
       else cls += ' ' + (key > today ? 'future' : 'none');
       if(key === today) cls += ' today';
       const flag = dls.length ? '<span class="mflag">' + icon('flag', 7) + '</span>' : '';
-      const title = fmtMD(key) + (st.total ? ' · 每日任务 ' + st.done + '/' + st.total : '') + (dls.length ? ' · 节点截止' : '');
+      const title = fmtMD(key) + (st.total ? ' · 完成度 ' + st.done + '/' + st.total : '') + (dls.length ? ' · 节点截止' : '');
       cells += '<button class="' + cls + '" data-act="goto-day" data-date="' + key + '" title="' + esc(title) + '" aria-label="' + esc(title) + '">' + flag + '</button>';
     }
     months += '<div class="mini-month">' +
@@ -1886,19 +1905,20 @@ function togglePlanTask(date, taskId){
 
   if(task.mode === 'weekly'){
     const c = ensureDay(date);
-    if(c.tasks[taskId]){
-      delete c.tasks[taskId];
-      saveDB(); renderView();
-      toast('已取消这一天的打卡');
-      return;
+    const rec = c.tasks[taskId];
+    if(rec){
+      rec.count = Math.max(1, Number(rec.count) || 1) + 1;
+      rec.at = new Date().toISOString();
+    }else{
+      c.tasks[taskId] = { at: new Date().toISOString(), pts: 0, count: 1 };
     }
-    c.tasks[taskId] = { at: new Date().toISOString(), pts: 0 };
+    const todayCount = taskDayCount(date, taskId);
     saveDB(); renderView();
     const cycle = weeklyCycleAt(task, date);
     const target = weeklyTargetOf(task);
     const cnt = cycle ? weeklyCheckedCount(task, cycle.start, cycle.end) : 0;
     const settled = cycle ? weeklySettlementFor(task, cycle.start) : null;
-    let msg = '已打卡 · 本周 ' + cnt + '/' + target;
+    let msg = '今日第 ' + todayCount + ' 次 · 本周 ' + cnt + '/' + target;
     if(task.reward) msg += ' · 奖励：' + task.reward;
     if(settled && settled.success && Number(settled.pts)) msg += ' · 本周已达标 +' + Number(settled.pts) + ' 积分';
     else if(cnt >= target) msg += ' · 已达标，等待结算';
@@ -1919,6 +1939,16 @@ function togglePlanTask(date, taskId){
   const st = dayStatus(date);
   const completeText = (st.total > 1 && st.done === st.total) ? ' · 当日全部完成' : '';
   toast('已完成' + (task.reward ? ' · 奖励：' + task.reward : '') + (pts ? ' · +' + pts + ' 积分' : '') + completeText);
+}
+function undoWeekly(date, taskId){
+  const c = db.checkins[date];
+  const rec = c && c.tasks && c.tasks[taskId];
+  if(!rec) return;
+  const n = Math.max(1, Number(rec.count) || 1);
+  if(n <= 1) delete c.tasks[taskId];
+  else rec.count = n - 1;
+  saveDB(); renderView();
+  toast(n > 1 ? '已撤销一次 · 今日剩 ' + (n - 1) + ' 次' : '已撤销这一天的打卡');
 }
 function toggleExtra(date, extraId){
   const c = db.checkins[date];
@@ -1984,6 +2014,7 @@ function handleAction(act, el){
       state.calView = 'month'; renderView(); break;
     }
     case 'toggle-task': togglePlanTask(date, el.getAttribute('data-task')); break;
+    case 'undo-weekly': undoWeekly(date, el.getAttribute('data-task')); break;
     case 'remove-day-task': removeDayTask(date, el.getAttribute('data-task')); break;
     case 'toggle-extra': toggleExtra(date, el.getAttribute('data-extra')); break;
     case 'remove-extra': removeExtra(date, el.getAttribute('data-extra')); break;
@@ -2953,7 +2984,7 @@ function deleteWish(wishId){
 const CAL_ACTS = new Set([
   'cal-view','day-prev','day-next','day-today','month-prev','month-next','month-today',
   'year-prev','year-next','year-today','goto-day','goto-month','toggle-task',
-  'remove-day-task','toggle-extra','remove-extra'
+  'undo-weekly','remove-day-task','toggle-extra','remove-extra'
 ]);
 function handleGlobalAction(el){
   const act = el.getAttribute('data-act');

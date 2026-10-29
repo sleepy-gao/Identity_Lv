@@ -612,6 +612,54 @@ svg{display:block}
 .redeemed-row .rr-date{font-size:10.5px;color:var(--muted-2);flex:0 0 auto;margin-left:auto}
 .redeemed-row .rr-cost{font-size:12px;color:var(--muted);flex:0 0 auto}
 
+/* 固定心愿：一杯奶茶 */
+.wish-add{display:flex;align-items:center;justify-content:center;gap:8px;min-height:118px;border-style:dashed;color:var(--muted);font-size:12px}
+.wish-add:hover{border-color:#cfdccc;color:var(--green)}
+.wish-add svg{opacity:.7}
+.wish-card.fixed{background:linear-gradient(155deg,#fffaf2 0%,#fff 58%);border-color:#f0e1cc}
+.wish-card.fixed:hover{border-color:#e6d0b4}
+.wish-card.fixed .wish-name{color:#7a4a2b}
+.wish-card.fixed .wish-edit{opacity:.55}
+.wish-card.fixed:hover .wish-edit{opacity:1}
+.wish-flag{display:inline-block;font-size:9.5px;font-weight:500;letter-spacing:.4px;color:#a37a4d;background:#fdf2e2;border:1px solid #f1e2ce;border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+
+/* 奶茶抽奖动画 */
+.milktea-modal{position:relative;max-width:590px}
+.mt-close{position:absolute;top:14px;right:14px;z-index:6}
+.mt-body{position:relative;padding:24px 22px 18px;overflow:hidden}
+.mt-title{text-align:center;font-size:21px;font-weight:700;letter-spacing:1px;color:#8a5530;line-height:1.3}
+.mt-sub{text-align:center;font-size:11px;color:var(--muted-2);margin:4px 0 14px}
+.mt-stage{position:relative;overflow:hidden;border-radius:20px;border:1px solid #efdcc2;background:linear-gradient(155deg,#fff8ed 0%,#fdf0df 58%,#f8e5cd 100%);padding:16px 14px 14px;display:flex;justify-content:center}
+.mt-stage::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 68%);left:-60px;bottom:-80px;pointer-events:none}
+.mt-dog-wrap{position:relative;z-index:1;width:100%;max-width:400px}
+.mt-dog{position:relative;z-index:1;width:58%;height:auto;display:block;clip-path:inset(1.6% 0 0 0);filter:drop-shadow(0 14px 16px rgba(146,102,58,.22))}
+.mt-slot{position:absolute;left:40%;top:42%;width:46%;min-width:0;z-index:3;display:flex;flex-direction:column;align-items:center;gap:7px}
+.mt-slot-window{width:100%;min-width:0;aspect-ratio:1/1;padding:10px;border-radius:18px;background:#fff;border:1px solid #ead6bd;box-shadow:inset 0 0 0 5px #fff8ee,0 14px 24px -16px rgba(130,88,44,.55);display:grid;place-items:center;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.mt-slot-window:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 5px #fff8ee,0 18px 26px -14px rgba(130,88,44,.6)}
+.mt-slot-window:active{transform:scale(.97)}
+.mt-slot-window img{width:100%;height:100%;object-fit:contain;animation:mtBreathe 2.4s ease-in-out infinite}
+.mt-slot-window.spinning img{animation:mtFlip .16s linear infinite}
+@keyframes mtBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes mtFlip{0%{opacity:1;transform:translateY(0) scale(1)}50%{opacity:.5;transform:translateY(-6px) scale(.93)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.mt-slot-hint{font-size:10.5px;color:#a8835c;display:flex;align-items:center;gap:5px;text-align:center;line-height:1.5}
+.mt-slot-hint i{width:5px;height:5px;border-radius:50%;background:#d9a86c;flex:0 0 auto;animation:mtDot 1.2s ease-in-out infinite}
+@keyframes mtDot{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+.mt-result{min-height:46px;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;text-align:center;font-size:12px;color:#8a6a4a}
+.mt-result b{font-size:16px;font-weight:650;color:#8a5530;letter-spacing:.5px}
+.mt-result .mt-result-sub{font-size:10.5px;color:var(--muted-2)}
+.mt-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.mt-confetti i{position:absolute;top:-16px;width:7px;height:12px;border-radius:2px;opacity:.95;animation:mtFall linear forwards}
+@keyframes mtFall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(460px) rotate(var(--mt-r,540deg));opacity:.3}}
+@media (max-width:520px){
+  .mt-body{padding:22px 15px 15px}
+  .mt-title{font-size:17px;letter-spacing:.6px}
+  .mt-stage{padding:12px 10px 10px;border-radius:16px}
+  .mt-dog-wrap{max-width:330px}
+  .mt-slot{left:40%;top:42%;width:46%;gap:6px}
+  .mt-slot-window{padding:7px;border-radius:13px}
+  .mt-result b{font-size:14px}
+}
+
 /* ============ 弹窗 ============ */
 .overlay{
   position:fixed;inset:0;z-index:80;background:rgba(28,42,33,.34);
@@ -985,7 +1033,7 @@ function normalizeDB(data){
       t.from = t.from || p.start;
       t.to = t.to || null;
       t.deadline = t.deadline || '';
-      t.reward = t.reward || '';
+      delete t.reward;
       t.penalty = t.penalty || '';
       t.penaltyMode = t.penaltyMode === 'ban' ? 'ban' : 'text';
       t.banStart = t.banStart || '';
@@ -1627,15 +1675,15 @@ function renderPlanTaskRow(date, plan, task, today){
     meta += '<span class="tag tag-period">' + icon('flag', 10) + '节点</span>';
     meta += '<span class="t-sub muted" style="margin-top:0">截止 ' + fmtDateTime(task.deadline) + '</span>';
     if(checked && comp){
-      sub = '已于 ' + fmtMD(comp.date) + ' 完成' + (task.reward ? ' · 奖励：' + esc(task.reward) : '');
+      pts = Number(comp.rec.pts) || pts;
+      sub = '已于 ' + fmtMD(comp.date) + ' 完成' + (pts ? ' · +' + pts + ' 积分' : '');
       subClass = 'reward';
-      pts = Number(comp.rec.pts) || 0;
     }else if(failed){
       sub = '已错过截止时间，可回到截止日前的日期补记' + (task.penalty ? ' · 惩罚：' + esc(task.penalty) + ((task.penaltyMode === 'ban' && task.banStart && task.banEnd) ? '（' + fmtMD(task.banStart) + ' – ' + fmtMD(task.banEnd) + '）' : '') : '');
       subClass = 'penalty';
       pts = 0;
     }else{
-      sub = task.reward ? '在截止前完成 · 奖励：' + esc(task.reward) : '在截止时间前完成即算成功';
+      sub = '在截止时间前完成即算成功' + (pts ? ' · +' + pts + ' 积分' : '');
       subClass = 'muted';
     }
   }else if(isWeekly){
@@ -1650,7 +1698,7 @@ function renderPlanTaskRow(date, plan, task, today){
     meta += '<span class="t-sub muted" style="margin-top:0">每周 ' + target + ' 次 · 本周 ' + cnt + '/' + target + '</span>';
     if(settled){
       if(settled.success){
-        sub = '本周达标 ' + settled.checked + '/' + settled.target + (task.reward ? ' · 奖励：' + esc(task.reward) : '') + (Number(settled.pts) ? ' · +' + settled.pts + ' 积分' : '');
+        sub = '本周达标 ' + settled.checked + '/' + settled.target + (Number(settled.pts) ? ' · +' + settled.pts + ' 积分' : '');
         subClass = 'reward';
         pts = Number(settled.pts) || 0;
       }else{
@@ -1661,7 +1709,7 @@ function renderPlanTaskRow(date, plan, task, today){
     }else{
       sub = (dayCount ? '今日已完成 ' + dayCount + ' 次 ' : '') ;
       if(cnt >= target) sub += ' · 已达标，等待结算';
-      else if(task.reward) sub += ' · 达标后：' + esc(task.reward);
+      else if(pts) sub += ' · 达标后 +' + pts + ' 积分';
       subClass = 'muted';
     }
   }else{
@@ -1669,17 +1717,14 @@ function renderPlanTaskRow(date, plan, task, today){
     if(checked){
       const rec = db.checkins[date] && db.checkins[date].tasks[task.id];
       pts = rec ? (Number(rec.pts)||0) : pts;
-      sub = task.reward ? '奖励：' + esc(task.reward) : '';
+      sub = '已完成' + (pts ? ' · +' + pts + ' 积分' : '');
       subClass = 'reward';
     }else if(date < today){
       sub = task.penalty ? '未完成 · 惩罚：' + esc(task.penalty) : '未完成';
       subClass = 'penalty';
       pts = 0;
-    }else if(date > today){
-      sub = task.reward ? '完成后：' + esc(task.reward) : '';
-      subClass = 'muted';
     }else{
-      sub = task.reward ? '完成后：' + esc(task.reward) : '';
+      sub = pts ? '完成后 +' + pts + ' 积分' : '';
       subClass = 'muted';
     }
   }
@@ -1899,7 +1944,7 @@ function togglePlanTask(date, taskId){
     c.tasks[taskId] = { at: new Date().toISOString(), pts: pointsForHours(task.estHours) };
     saveDB(); renderView();
     const pts = pointsForHours(task.estHours);
-    toast('已完成' + (task.reward ? ' · 奖励：' + task.reward : '') + (pts ? ' · +' + pts + ' 积分' : ''));
+    toast('已完成' + (pts ? ' · +' + pts + ' 积分' : ''));
     return;
   }
 
@@ -1919,7 +1964,6 @@ function togglePlanTask(date, taskId){
     const cnt = cycle ? weeklyCheckedCount(task, cycle.start, cycle.end) : 0;
     const settled = cycle ? weeklySettlementFor(task, cycle.start) : null;
     let msg = '今日第 ' + todayCount + ' 次 · 本周 ' + cnt + '/' + target;
-    if(task.reward) msg += ' · 奖励：' + task.reward;
     if(settled && settled.success && Number(settled.pts)) msg += ' · 本周已达标 +' + Number(settled.pts) + ' 积分';
     else if(cnt >= target) msg += ' · 已达标，等待结算';
     toast(msg);
@@ -1938,7 +1982,7 @@ function togglePlanTask(date, taskId){
   const pts = pointsForHours(task.estHours);
   const st = dayStatus(date);
   const completeText = (st.total > 1 && st.done === st.total) ? ' · 当日全部完成' : '';
-  toast('已完成' + (task.reward ? ' · 奖励：' + task.reward : '') + (pts ? ' · +' + pts + ' 积分' : '') + completeText);
+  toast('已完成' + (pts ? ' · +' + pts + ' 积分' : '') + completeText);
 }
 function undoWeekly(date, taskId){
   const c = db.checkins[date];
@@ -2175,13 +2219,12 @@ function openPlanDetail(planId){
       : t.mode === 'weekly'
         ? '周期 · 每周 ' + weeklyTargetOf(t) + ' 次 · 达标 +' + pointsForHours(t.estHours) + ' 积分'
         : '每日 · 预计 ' + fmtHours(t.estHours) + ' 小时';
-    const rewardsText = t.reward ? '奖励：' + esc(t.reward) : '';
     const penaltiesText = t.penalty ? '惩罚：' + esc(penaltyLabel(t)) : '';
     return '<div class="detail-task">' +
       '<div class="dt-main">' +
         '<div class="dt-name">' + esc(t.name) + '<span class="tag ' + taskModeClass(t.mode) + '">' + taskModeShort(t.mode) + '</span></div>' +
         '<div class="dt-sub">' + sub + '</div>' +
-        ((rewardsText || penaltiesText) ? '<div class="dt-sub">' + [rewardsText, penaltiesText].filter(Boolean).join(' · ') + '</div>' : '') +
+        (penaltiesText ? '<div class="dt-sub">' + penaltiesText + '</div>' : '') +
       '</div>' +
       '<div class="dt-metrics">' +
         '<span><b>' + tm.days + '</b>坚持天数</span>' +
@@ -2221,7 +2264,7 @@ function blankTask(){
     id: 'new-' + uid(),
     name: '', mode: 'daily', deadline: '', estHours: '',
     weeklyTarget: 3, banWeekStart: 1, banWeekEnd: 3,
-    reward: '', penalty: '', penaltyMode: 'text', banStart: '', banEnd: '',
+    penalty: '', penaltyMode: 'text', banStart: '', banEnd: '',
     isNew: true, from: null
   };
 }
@@ -2232,7 +2275,7 @@ function openPlanEditor(planId){
   if(plan){
     const tasks = plan.tasks.filter(t => !t.to).map(t => ({
       id: t.id, name: t.name, mode: t.mode, deadline: t.deadline,
-      estHours: t.estHours, reward: t.reward, penalty: t.penalty,
+      estHours: t.estHours, penalty: t.penalty,
       weeklyTarget: t.weeklyTarget || 3, banWeekStart: t.banWeekStart || 1, banWeekEnd: t.banWeekEnd || 3,
       penaltyMode: t.penaltyMode || 'text', banStart: t.banStart || '', banEnd: t.banEnd || '',
       isNew: false, from: t.from, originalFrom: t.from
@@ -2278,15 +2321,11 @@ function taskEditorRow(t, idx){
         ? '<div class="field te-wide"><label>每周次数</label><div class="te-hours-row"><select class="input" data-ptask="' + idx + '" data-pfield="weeklyTarget">' + countOptions + '</select><span class="te-note">每 7 天为一个周期，达标才获得积分</span></div></div>'
         : '') +
       (isPeriod || isWeekly
-        ? '<div class="field te-wide"><label>完成奖励</label><input class="input" data-ptask="' + idx + '" data-pfield="reward" value="' + esc(t.reward) + '" maxlength="80" placeholder="例如：一杯奶茶" autocomplete="off"></div>' +
-          '<div class="te-pair">' +
+        ? '<div class="te-pair">' +
             '<div class="field"><label>惩罚方式</label><div class="te-seg te-seg-inline"><button type="button" data-act="pe-penalty-mode" data-idx="' + idx + '" data-mode="text" class="' + (!banMode?'active':'') + '">内容惩罚</button><button type="button" data-act="pe-penalty-mode" data-idx="' + idx + '" data-mode="ban" class="' + (banMode?'active':'') + '">禁止做某事</button></div></div>' +
             '<div class="field"><label>惩罚内容</label><input class="input" data-ptask="' + idx + '" data-pfield="penalty" value="' + esc(t.penalty) + '" maxlength="80" placeholder="' + (banMode ? '例如：不能看IVL' : '例如：加练1km慢跑') + '" autocomplete="off"></div>' +
           '</div>'
-        : '<div class="te-pair">' +
-            '<div class="field"><label>完成奖励</label><input class="input" data-ptask="' + idx + '" data-pfield="reward" value="' + esc(t.reward) + '" maxlength="80" placeholder="例如：一杯奶茶" autocomplete="off"></div>' +
-            '<div class="field"><label>未完成惩罚</label><input class="input" data-ptask="' + idx + '" data-pfield="penalty" value="' + esc(t.penalty) + '" maxlength="80" placeholder="例如：加练1km慢跑" autocomplete="off"></div>' +
-          '</div>') +
+        : '<div class="field te-wide"><label>未完成惩罚</label><input class="input" data-ptask="' + idx + '" data-pfield="penalty" value="' + esc(t.penalty) + '" maxlength="80" placeholder="例如：加练1km慢跑" autocomplete="off"></div>') +
       (banMode && isPeriod ? '<div class="field te-wide"><label>禁止时间段</label><div class="range-grid"><input class="input" type="date" data-ptask="' + idx + '" data-pfield="banStart" value="' + esc(banStart) + '"><input class="input" type="date" data-ptask="' + idx + '" data-pfield="banEnd" value="' + esc(banEnd) + '"></div></div>' : '') +
       (banMode && isWeekly ? '<div class="field te-wide"><label>禁止时间段（结算后下一周）</label><div class="weekday-range"><select class="input" data-ptask="' + idx + '" data-pfield="banWeekStart">' + weekdayOptions(banWeekStart) + '</select><span class="wd-sep">至</span><select class="input" data-ptask="' + idx + '" data-pfield="banWeekEnd">' + weekdayOptions(banWeekEnd) + '</select></div></div>' : '') +
       (isPeriod ? '<div class="field te-deadline"><label>截止时间</label><input class="input" type="datetime-local" data-ptask="' + idx + '" data-pfield="deadline" value="' + esc(deadline) + '"></div>' : '') +
@@ -2316,7 +2355,7 @@ function renderPlanEditor(){
       '<div class="task-editors" id="planEditorRows">' + rows + '</div>' +
       '<button type="button" class="add-task-btn mt-3" data-act="pe-add-task" style="width:100%">' + icon('plus', 14) + '添加任务</button>' +
       '<div class="form-error" id="planFormError"></div>' +
-      '<div class="form-note">改名与奖惩修改会同步到该规划内所有历史日程；<b>新增任务从今天开始生效，删除任务从今天起停止</b>，过去的日程保持不变。</div>' +
+      '<div class="form-note">改名与惩罚修改会同步到该规划内所有历史日程；<b>新增任务从今天开始生效，删除任务从今天起停止</b>，过去的日程保持不变。</div>' +
     '</div>' +
     '<div class="modal-foot"><div class="mf-actions"><button class="btn btn-ghost" data-act="modal-close">取消</button><button class="btn btn-primary" data-act="pe-save">' + (isEdit ? '保存修改' : '创建规划') + '</button></div></div>',
     {wide:true}
@@ -2386,7 +2425,7 @@ function savePlanDraft(){
           banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
           banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
           estHours: Math.max(0, Number(t.estHours) || 0),
-          reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+          penalty: (t.penalty||'').trim(),
           penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
           banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
           banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
@@ -2404,7 +2443,7 @@ function savePlanDraft(){
           banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
           banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
           estHours: Math.max(0, Number(t.estHours) || 0),
-          reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+          penalty: (t.penalty||'').trim(),
           penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
           banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
           banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
@@ -2442,7 +2481,7 @@ function savePlanDraft(){
         banWeekStart: t.mode === 'weekly' && t.penaltyMode === 'ban' ? clamp(Number(t.banWeekStart)||1, 1, 7) : 0,
         banWeekEnd: t.mode === 'weekly' && t.penaltyMode === 'ban' ? Math.max(clamp(Number(t.banWeekStart)||1, 1, 7), clamp(Number(t.banWeekEnd)||3, 1, 7)) : 0,
         estHours: Math.max(0, Number(t.estHours) || 0),
-        reward: (t.reward||'').trim(), penalty: (t.penalty||'').trim(),
+        penalty: (t.penalty||'').trim(),
         penaltyMode: (t.mode === 'period' || t.mode === 'weekly') && t.penaltyMode === 'ban' ? 'ban' : 'text',
         banStart: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banStart : '',
         banEnd: t.mode === 'period' && t.penaltyMode === 'ban' ? t.banEnd : '',
@@ -2485,7 +2524,7 @@ const toastRoot = document.getElementById('toastRoot');
 
 function openModal(innerHtml, opts){
   opts = opts || {};
-  const cls = 'modal' + (opts.wide ? ' wide' : '') + (opts.small ? ' small' : '');
+  const cls = 'modal' + (opts.wide ? ' wide' : '') + (opts.small ? ' small' : '') + (opts.className ? ' ' + opts.className : '');
   modalRoot.innerHTML = '<div class="overlay" data-overlay="modal"><div class="' + cls + '" role="dialog" aria-modal="true">' + innerHtml + '</div></div>';
   document.body.classList.add('lock');
 }
@@ -2562,7 +2601,7 @@ function buildReview(scope){
       if(m.state === 'none') return;
       rows.push({
         planId: plan.id, taskId: task.id,
-        name: task.name, mode: task.mode, reward: task.reward || '',
+        name: task.name, mode: task.mode,
         weeklyTarget: task.mode === 'weekly' ? weeklyTargetOf(task) : 0,
         penalty: penaltyLabel(task), deadline: task.deadline || '',
         days: m.days, rewards: m.rewards, penalties: m.penalties,
@@ -2660,7 +2699,6 @@ function renderReviewGroups(groups, interactive){
         const bits = [taskModeLabel(row.mode)];
         if(row.mode === 'period' && row.deadline) bits.push('截止 ' + fmtDateTime(row.deadline));
         if(row.mode === 'weekly') bits.push('每周 ' + (row.weeklyTarget || 3) + ' 次');
-        if(row.reward) bits.push('奖励：' + row.reward);
         if(row.penalty) bits.push('惩罚：' + row.penalty);
         const sub = bits.join(' · ');
         const canOpen = interactive && row.planId && row.taskId;
@@ -2731,11 +2769,11 @@ function openReviewMetric(planId, taskId, kind){
   if(!task){ toast('没有找到这条任务'); return; }
   const isReward = kind === 'reward';
   const events = metricEvents(plan, task, kind);
-  const content = (isReward ? task.reward : penaltyLabel(task)) || (isReward ? '未设置奖励内容' : '未设置惩罚内容');
+  const content = isReward ? '完成任务获得积分（每小时 10 积分）' : (penaltyLabel(task) || '未设置惩罚内容');
   openModal(
     '<div class="modal-head"><div><h3>' + (isReward ? '奖励记录' : '惩罚记录') + '</h3><p>' + esc(plan.name) + ' · ' + esc(task.name) + '</p></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
     '<div class="modal-body">' +
-      '<div class="metric-content"><span>' + (isReward ? '奖励内容' : '惩罚内容') + '</span><b>' + esc(content) + '</b></div>' +
+      '<div class="metric-content"><span>' + (isReward ? '奖励方式' : '惩罚内容') + '</span><b>' + esc(content) + '</b></div>' +
       '<div class="metric-count">共 <b>' + events.length + '</b> 次 · ' + taskModeLabel(task.mode) + '</div>' +
       (events.length
         ? '<div class="metric-list">' + events.map(ev => '<div class="metric-event"><span>' + fmtMD(ev.date) + ' · ' + weekdayCN(ev.date) + '</span><em>' + ev.note + '</em></div>').join('') + '</div>'
@@ -2831,7 +2869,6 @@ function downloadSavedReview(id){
     lines.push(g.name + '（' + g.start + ' – ' + g.end + '，' + g.status + '）');
     g.rows.forEach(row => {
       lines.push('· ' + row.name + '（' + taskModeShort(row.mode) + '）：坚持 ' + row.days + ' 天，奖励 ' + row.rewards + ' 次，惩罚 ' + row.penalties + ' 次');
-      if(row.reward) lines.push('  奖励内容：' + row.reward);
       if(row.penalty) lines.push('  惩罚内容：' + row.penalty);
     });
   });
@@ -2860,16 +2897,61 @@ function downloadSavedReview(id){
 /* ============================================================
    商城
    ============================================================ */
+const MILKTEA_ID = 'wish-milktea';
+const MILK_TEAS = [
+  {name: '霸王茶姬', src: 'image/milktea/chagee.png'},
+  {name: '喜茶', src: 'image/milktea/heytea.png'},
+  {name: '古茗', src: 'image/milktea/goodme.png'},
+  {name: '茉莉奶白', src: 'image/milktea/molly-tea.png'},
+  {name: '一点点', src: 'image/milktea/a-little-tea.png'},
+  {name: '东方墨兰', src: 'image/milktea/molan.png'},
+  {name: '乐乐茶', src: 'image/milktea/lelecha.png'},
+  {name: '李若桃', src: 'image/milktea/liruotao.png'},
+  {name: '瑞幸', src: 'image/milktea/luckin.png'}
+];
+
+function ensureMilkTeaWish(){
+  let wish = db.wishes.find(w => w.id === MILKTEA_ID);
+  if(!wish){
+    wish = {
+      id: MILKTEA_ID, name: '一杯奶茶', cost: 60,
+      note: '小柴大王请客',
+      createdAt: new Date().toISOString(), redeemedAt: null
+    };
+    db.wishes.unshift(wish);
+  }
+  wish.name = '一杯奶茶';
+  wish.note = '小柴大王请客';
+  wish.redeemedAt = null;
+  return wish;
+}
 function renderStorePage(){
   const bal = balancePoints();
   const earned = earnedPoints();
   const spent = spentPoints();
-  const active = db.wishes.filter(w => !w.redeemedAt);
+  const milkTea = ensureMilkTeaWish();
+  const active = db.wishes.filter(w => !w.redeemedAt && w.id !== MILKTEA_ID);
   const redeemed = db.wishes.filter(w => w.redeemedAt).sort((a,b) => (b.redeemedAt || '').localeCompare(a.redeemedAt || ''));
-  const wishCards = active.length ? active.map(w => {
-    const cost = Number(w.cost) || 0;
-    const pct = clamp(Math.round(bal / Math.max(cost,1) * 100), 0, 100);
-    const can = bal >= cost;
+  const progressOf = cost => clamp(Math.round(bal / Math.max(cost,1) * 100), 0, 100);
+  const cost = Number(milkTea.cost) || 0;
+  const can = bal >= cost;
+  const milkTeaCard = '<div class="wish-card card fixed">' +
+    '<div class="wish-top"><div><div class="wish-name">一杯奶茶<span class="wish-flag">固定心愿</span></div>' +
+      '<div class="wish-note">' + esc(milkTea.note || '小柴大王请客') + '</div></div>' +
+      '<div class="wish-acts"><button class="wish-edit" data-act="edit-milktea-cost" title="调整积分价格" aria-label="调整积分价格">' + icon('edit', 13) + '</button></div></div>' +
+    '<div class="wish-bottom"><div>' +
+      '<div class="wish-cost">' + cost + '<small>积分</small></div>' +
+      '<div class="wish-progress"><i style="width:' + progressOf(cost) + '%"></i></div>' +
+      '<div class="wish-status">' + (can ? '积分已足够 · 可以抽奶茶啦' : '还差 ' + (cost - bal) + ' 积分') + '</div>' +
+    '</div>' +
+    (can
+      ? '<button class="btn btn-primary btn-sm" data-act="redeem-wish" data-wish="' + MILKTEA_ID + '">兑换</button>'
+      : '<button class="btn btn-ghost btn-sm" disabled>积分不足</button>') +
+    '</div></div>';
+
+  const wishCards = active.map(w => {
+    const wCost = Number(w.cost) || 0;
+    const wCan = bal >= wCost;
     return '<div class="wish-card card">' +
       '<div class="wish-top"><div><div class="wish-name">' + esc(w.name) + '</div>' + (w.note ? '<div class="wish-note">' + esc(w.note) + '</div>' : '') + '</div>' +
         '<div class="wish-acts">' +
@@ -2877,16 +2959,17 @@ function renderStorePage(){
           '<button class="wish-del" data-act="delete-wish" data-wish="' + w.id + '" title="删除愿望" aria-label="删除愿望">' + icon('x', 14) + '</button>' +
         '</div></div>' +
       '<div class="wish-bottom"><div>' +
-        '<div class="wish-cost">' + cost + '<small>积分</small></div>' +
-        '<div class="wish-progress"><i style="width:' + pct + '%"></i></div>' +
-        '<div class="wish-status">' + (can ? '积分已足够' : '还差 ' + (cost - bal) + ' 积分') + '</div>' +
+        '<div class="wish-cost">' + wCost + '<small>积分</small></div>' +
+        '<div class="wish-progress"><i style="width:' + progressOf(wCost) + '%"></i></div>' +
+        '<div class="wish-status">' + (wCan ? '积分已足够' : '还差 ' + (wCost - bal) + ' 积分') + '</div>' +
       '</div>' +
-      (can
+      (wCan
         ? '<button class="btn btn-primary btn-sm" data-act="redeem-wish" data-wish="' + w.id + '">兑换</button>'
         : '<button class="btn btn-ghost btn-sm" disabled>积分不足</button>') +
       '</div>' +
     '</div>';
-  }).join('') : '<div class="card empty" style="padding:34px 22px;grid-column:1/-1"><div class="empty-ic">' + icon('store', 22) + '</div><b>愿望清单还是空的</b><p>把想犒劳自己的事写下来，积分够了就来兑换。</p><button class="btn btn-primary mt-3" data-act="add-wish">' + icon('plus', 15) + '添加愿望</button></div>';
+  }).join('');
+  const addCard = active.length ? '' : '<button type="button" class="wish-card card wish-add" data-act="add-wish">' + icon('plus', 16) + '<span>添加更多愿望</span></button>';
 
   const redeemedHtml = redeemed.length ? '<div class="wish-head" style="margin-top:26px"><div><h2>已兑换</h2><div class="wh-sub">用坚持换来的小奖励</div></div></div>' +
     '<div class="card panel" style="padding:10px 18px"><div class="redeemed-list">' + redeemed.map(w =>
@@ -2902,7 +2985,7 @@ function renderStorePage(){
       '<div class="wallet-mark">' + icon('spark', 26) + '</div>' +
     '</div>' +
     '<div class="wish-head"><div><h2>愿望清单</h2><div class="wh-sub">积分达标后即可兑换</div></div></div>' +
-    '<div class="wish-grid">' + wishCards + '</div>' +
+    '<div class="wish-grid">' + milkTeaCard + wishCards + addCard + '</div>' +
     redeemedHtml;
 }
 function openWishEditor(wishId){
@@ -2950,9 +3033,128 @@ function saveWish(){
   renderView();
   toast('愿望已加入清单');
 }
+function openMilkTeaCostEditor(){
+  const wish = ensureMilkTeaWish();
+  openModal(
+    '<div class="modal-head"><div><h3>调整「一杯奶茶」的价格</h3></div><button class="modal-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="form-grid"><div class="field full"><label>需要积分</label><input class="input" id="mtCostInput" type="number" min="1" step="10" value="' + (Number(wish.cost) || '') + '" placeholder="例如：60" inputmode="numeric"></div></div>' +
+    '</div>' +
+    '<div class="modal-foot"><div class="mf-note">每小时专注可获得 10 积分</div><div class="mf-actions"><button class="btn btn-ghost" data-act="modal-close">取消</button><button class="btn btn-primary" data-act="save-milktea-cost">保存</button></div></div>'
+  );
+}
+function saveMilkTeaCost(){
+  const wish = ensureMilkTeaWish();
+  const cost = parseInt(($('#mtCostInput') && $('#mtCostInput').value) || '0', 10);
+  if(!cost || cost <= 0){ toast('给这杯奶茶设置一个积分价格'); return; }
+  wish.cost = cost;
+  wish.updatedAt = new Date().toISOString();
+  saveDB();
+  closeModal();
+  renderView();
+  toast('奶茶的积分价格已更新');
+}
+
+let mtTimer = null;
+let mtBusy = false;
+let mtConfettiTimer = null;
+
+function openMilkTeaDraw(paidCost, balanceAfter){
+  openModal(
+    '<button type="button" class="modal-close mt-close" data-act="modal-close" aria-label="关闭">' + icon('x', 16) + '</button>' +
+    '<div class="mt-body">' +
+      '<h3 class="mt-title">小柴大王请你喝奶茶啦</h3>' +
+      '<div class="mt-sub">已消耗 ' + paidCost + ' 积分 · 当前余额 ' + balanceAfter + ' 积分</div>' +
+      '<div class="mt-stage">' +
+        '<div class="mt-dog-wrap"><img class="mt-dog" src="image/dog1.png" alt="小柴大王">' +
+          '<div class="mt-slot">' +
+            '<button type="button" class="mt-slot-window" data-act="mt-draw" aria-label="点击抽取一杯奶茶">' +
+              '<img id="mtSlotImg" src="' + MILK_TEAS[0].src + '" alt="奶茶品牌">' +
+            '</button>' +
+            '<div class="mt-slot-hint" id="mtSlotHint"><i></i><span>点一下抽奖框，抽一杯奶茶</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mt-confetti" id="mtConfetti"></div>' +
+      '</div>' +
+      '<div class="mt-result" id="mtResult"></div>' +
+    '</div>' +
+    '<div class="modal-foot"><div class="mf-note">抽中后不满意，可以再抽一次</div>' +
+      '<div class="mf-actions"><button class="btn btn-ghost" data-act="mt-redraw" disabled>重新抽一次</button>' +
+      '<button class="btn btn-primary" data-act="mt-thanks">谢谢小柴大王</button></div></div>',
+    {className:'milktea-modal'}
+  );
+  mtBusy = false;
+}
+function startMilkTeaDraw(){
+  if(mtBusy) return;
+  const img = $('#mtSlotImg');
+  if(!img) return;
+  mtBusy = true;
+  clearTimeout(mtTimer);
+  clearTimeout(mtConfettiTimer);
+  const frame = img.closest('.mt-slot-window');
+  const hint = $('#mtSlotHint');
+  const result = $('#mtResult');
+  const confetti = $('#mtConfetti');
+  const redraw = $('[data-act="mt-redraw"]');
+  if(confetti) confetti.innerHTML = '';
+  if(result) result.innerHTML = '<span class="mt-result-sub">小柴大王正在摇号…</span>';
+  if(hint) hint.innerHTML = '<i></i><span>正在抽取…</span>';
+  if(redraw) redraw.setAttribute('disabled', '');
+  if(frame) frame.classList.add('spinning');
+  let idx = Math.floor(Math.random() * MILK_TEAS.length);
+  let step = 0;
+  const total = 24;
+  const tick = () => {
+    const el = $('#mtSlotImg');
+    if(!el){ mtBusy = false; mtTimer = null; return; }
+    idx = (idx + 1 + Math.floor(Math.random() * 2)) % MILK_TEAS.length;
+    el.src = MILK_TEAS[idx].src;
+    step++;
+    if(step >= total){
+      mtTimer = null;
+      mtBusy = false;
+      const final = Math.floor(Math.random() * MILK_TEAS.length);
+      el.src = MILK_TEAS[final].src;
+      const win = el.closest('.mt-slot-window');
+      if(win) win.classList.remove('spinning');
+      if(hint) hint.innerHTML = '<span>抽中啦，还可以再抽一次</span>';
+      if(result) result.innerHTML = '<span class="mt-result-sub">抽到</span><b>「' + MILK_TEAS[final].name + '」</b><span class="mt-result-sub">小柴大王这就去买</span>';
+      const rBtn = $('[data-act="mt-redraw"]');
+      if(rBtn) rBtn.removeAttribute('disabled');
+      playMilkTeaConfetti();
+      return;
+    }
+    const delay = step < 14 ? 55 : 55 + (step - 13) * 30;
+    mtTimer = setTimeout(tick, delay);
+  };
+  mtTimer = setTimeout(tick, 55);
+}
+function playMilkTeaConfetti(){
+  const stage = $('#mtConfetti');
+  if(!stage) return;
+  clearTimeout(mtConfettiTimer);
+  stage.innerHTML = '';
+  const colors = ['#f0b64b','#e58b62','#7fb069','#6fa8c7','#d98ba8','#f2d06b','#b98bc9'];
+  let html = '';
+  for(let i=0;i<46;i++){
+    const round = i % 3 === 0;
+    html += '<i style="left:' + (Math.random()*100).toFixed(1) + '%;background:' + colors[i % colors.length] +
+      ';animation-delay:' + (Math.random()*0.5).toFixed(2) + 's;animation-duration:' + (1.7 + Math.random()*1.1).toFixed(2) +
+      's;--mt-r:' + Math.round(240 + Math.random()*720) + 'deg' + (round ? ';border-radius:50%;width:8px;height:8px' : '') + '"></i>';
+  }
+  stage.innerHTML = html;
+  mtConfettiTimer = setTimeout(() => {
+    const el = $('#mtConfetti');
+    if(el && el === stage) el.innerHTML = '';
+    mtConfettiTimer = null;
+  }, 3200);
+}
 function redeemWish(wishId){
   const wish = db.wishes.find(w => w.id === wishId);
-  if(!wish || wish.redeemedAt) return;
+  if(!wish) return;
+  if(wish.id === MILKTEA_ID){ redeemMilkTea(wish); return; }
+  if(wish.redeemedAt) return;
   const bal = balancePoints();
   if(bal < wish.cost){ toast('积分还不够，再坚持几天吧', 'terra'); return; }
   openConfirm({
@@ -2968,6 +3170,24 @@ function redeemWish(wishId){
       saveDB();
       renderView();
       toast('已兑换：' + wish.name);
+    }
+  });
+}
+function redeemMilkTea(wish){
+  const bal = balancePoints();
+  if(bal < wish.cost){ toast('积分还不够，再坚持几天吧', 'terra'); return; }
+  openConfirm({
+    title: '兑换「一杯奶茶」',
+    text: '将消耗 ' + wish.cost + ' 积分，兑换后余额为 ' + (bal - wish.cost) + ' 积分。',
+    confirmText: '确认兑换',
+    onConfirm(){
+      const cur = balancePoints();
+      if(cur < wish.cost){ toast('积分不足，暂时无法兑换', 'terra'); return; }
+      const at = new Date().toISOString();
+      db.redemptions.push({ id: uid(), wishId: wish.id, name: wish.name, cost: wish.cost, at });
+      saveDB();
+      renderView();
+      openMilkTeaDraw(wish.cost, balancePoints());
     }
   });
 }
@@ -3100,9 +3320,17 @@ function handleGlobalAction(el){
     }
     case 'add-wish': openWishEditor(); break;
     case 'edit-wish': openWishEditor(el.getAttribute('data-wish')); break;
+    case 'edit-milktea-cost': openMilkTeaCostEditor(); break;
+    case 'save-milktea-cost': saveMilkTeaCost(); break;
     case 'wish-save': saveWish(); break;
     case 'redeem-wish': redeemWish(el.getAttribute('data-wish')); break;
     case 'delete-wish': deleteWish(el.getAttribute('data-wish')); break;
+    case 'mt-draw':
+    case 'mt-redraw': startMilkTeaDraw(); break;
+    case 'mt-thanks':
+      closeModal();
+      toast('小柴大王收到你的感谢，记得好好喝');
+      break;
   }
 }
 
@@ -3170,6 +3398,7 @@ function bindEvents(){
 
 /* ---------------- 启动 ---------------- */
 db = loadDB();
+ensureMilkTeaWish();
 saveDB();
 renderShell();
 renderView();

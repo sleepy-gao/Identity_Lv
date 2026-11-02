@@ -1169,6 +1169,30 @@ function weekdaysText(a, b){
   return WEEKDAY_NAMES[s-1] + '–' + WEEKDAY_NAMES[e-1];
 }
 function weeklyTargetOf(task){ return clamp(Number(task.weeklyTarget)||3, 1, 7); }
+function weeklyPointsAt(task, count){
+  const total = pointsForHours(task.estHours);
+  const target = weeklyTargetOf(task);
+  return Math.min(total, Math.round(total * Math.min(count, target) / target));
+}
+function weeklyEarnedPoints(task, cycleStart, cycleEnd){
+  let total = 0;
+  for(let d = cycleStart; d <= cycleEnd; d = addDays(d, 1)){
+    const rec = db.checkins[d] && db.checkins[d].tasks && db.checkins[d].tasks[task.id];
+    if(rec) total += Number(rec.pts) || 0;
+  }
+  return total;
+}
+function syncWeeklyWeekPoints(task, cycleStart, cycleEnd){
+  let seen = 0;
+  for(let d = cycleStart; d <= cycleEnd; d = addDays(d, 1)){
+    const rec = db.checkins[d] && db.checkins[d].tasks && db.checkins[d].tasks[task.id];
+    if(!rec) continue;
+    const n = taskDayCount(d, task.id);
+    const after = weeklyPointsAt(task, seen + n);
+    rec.pts = Math.max(0, after - weeklyPointsAt(task, seen));
+    seen += n;
+  }
+}
 function taskModeLabel(mode){
   return mode === 'period' ? '节点任务' : mode === 'weekly' ? '周期任务' : '每日任务';
 }
@@ -1245,7 +1269,7 @@ function syncWeeklySettlements(){
           rec.target = target;
           rec.checked = checked;
           rec.success = success;
-          rec.pts = success ? ((rec.success && rec.pts) ? Number(rec.pts)||0 : pointsForHours(task.estHours)) : 0;
+          rec.pts = Number(rec.pts) || 0;
           rec.banFrom = banRange ? banRange.from : '';
           rec.banTo = banRange ? banRange.to : '';
           rec.planName = plan.name;
@@ -1715,6 +1739,8 @@ function renderPlanTaskRow(date, plan, task, today){
     const cnt = weeklyCheckedCount(task, cycleStart, cycleEnd);
     const dayCount = taskDayCount(date, task.id);
     const settled = weeklySettlementFor(task, cycleStart);
+    const recToday = db.checkins[date] && db.checkins[date].tasks && db.checkins[date].tasks[task.id];
+    const totalPts = pointsForHours(task.estHours);
     meta += '<span class="tag tag-weekly">周期</span>';
     meta += '<span class="t-sub muted" style="margin-top:0">每周 ' + target + ' 次 · 本周 ' + cnt + '/' + target + '</span>';
     if(settled){
@@ -1725,13 +1751,15 @@ function renderPlanTaskRow(date, plan, task, today){
       }else{
         sub = '本周仅 ' + settled.checked + '/' + settled.target + ' 次' + (task.penalty ? ' · 惩罚：' + esc(weeklyPenaltyText(task, settled)) : '');
         subClass = 'penalty';
-        pts = 0;
+        pts = recToday ? (Number(recToday.pts) || 0) : 0;
       }
     }else{
-      sub = (dayCount ? '今日已完成 ' + dayCount + ' 次 ' : '') ;
-      if(cnt >= target) sub += ' · 已达标，等待结算';
-      else if(pts) sub += ' · 达标后 +' + pts + ' 积分';
+      const earned = weeklyEarnedPoints(task, cycleStart, cycleEnd);
+      sub = (dayCount ? '今日已完成 ' + dayCount + ' 次 · ' : '') + '本周已得 ' + earned + '/' + totalPts + ' 积分';
+      if(cnt >= target) sub += ' · 已拿满';
+      else if(totalPts) sub += ' · 每次 +' + Math.round(totalPts / target) + ' 积分';
       subClass = 'muted';
+      pts = recToday ? (Number(recToday.pts) || 0) : Math.round(totalPts / target);
     }
   }else{
     meta += '<span class="tag tag-daily">每日</span>';
@@ -1970,6 +1998,9 @@ function togglePlanTask(date, taskId){
   }
 
   if(task.mode === 'weekly'){
+    const cycle = weeklyCycleAt(task, date);
+    const settled = cycle ? weeklySettlementFor(task, cycle.start) : null;
+    const beforeEarned = (cycle && !settled) ? weeklyEarnedPoints(task, cycle.start, cycle.end) : 0;
     const c = ensureDay(date);
     const rec = c.tasks[taskId];
     if(rec){
@@ -1978,15 +2009,17 @@ function togglePlanTask(date, taskId){
     }else{
       c.tasks[taskId] = { at: new Date().toISOString(), pts: 0, count: 1 };
     }
+    if(cycle && !settled) syncWeeklyWeekPoints(task, cycle.start, cycle.end);
+    const afterEarned = (cycle && !settled) ? weeklyEarnedPoints(task, cycle.start, cycle.end) : 0;
+    const added = afterEarned - beforeEarned;
     const todayCount = taskDayCount(date, taskId);
     saveDB(); renderView();
-    const cycle = weeklyCycleAt(task, date);
     const target = weeklyTargetOf(task);
     const cnt = cycle ? weeklyCheckedCount(task, cycle.start, cycle.end) : 0;
-    const settled = cycle ? weeklySettlementFor(task, cycle.start) : null;
     let msg = '今日第 ' + todayCount + ' 次 · 本周 ' + cnt + '/' + target;
-    if(settled && settled.success && Number(settled.pts)) msg += ' · 本周已达标 +' + Number(settled.pts) + ' 积分';
-    else if(cnt >= target) msg += ' · 已达标，等待结算';
+    if(added > 0) msg += ' · +' + added + ' 积分';
+    else if(cnt >= target) msg += ' · 本周积分已拿满';
+    else if(settled && settled.success && Number(settled.pts)) msg += ' · 本周已达标 +' + Number(settled.pts) + ' 积分';
     toast(msg);
     return;
   }
@@ -2009,11 +2042,18 @@ function undoWeekly(date, taskId){
   const c = db.checkins[date];
   const rec = c && c.tasks && c.tasks[taskId];
   if(!rec) return;
+  const found = findTask(taskId);
+  const cycle = found ? weeklyCycleAt(found.task, date) : null;
+  const settled = cycle ? weeklySettlementFor(found.task, cycle.start) : null;
+  const beforeEarned = (cycle && !settled) ? weeklyEarnedPoints(found.task, cycle.start, cycle.end) : 0;
   const n = Math.max(1, Number(rec.count) || 1);
   if(n <= 1) delete c.tasks[taskId];
   else rec.count = n - 1;
+  if(cycle && !settled) syncWeeklyWeekPoints(found.task, cycle.start, cycle.end);
+  const afterEarned = (cycle && !settled) ? weeklyEarnedPoints(found.task, cycle.start, cycle.end) : 0;
+  const diff = beforeEarned - afterEarned;
   saveDB(); renderView();
-  toast(n > 1 ? '已撤销一次 · 今日剩 ' + (n - 1) + ' 次' : '已撤销这一天的打卡');
+  toast((n > 1 ? '已撤销一次 · 今日剩 ' + (n - 1) + ' 次' : '已撤销这一天的打卡') + (diff > 0 ? ' · -' + diff + ' 积分' : ''));
 }
 function toggleExtra(date, extraId){
   const c = db.checkins[date];
@@ -2122,7 +2162,13 @@ function taskMetrics(plan, task){
     const settlements = weeklyTaskSettlements(plan.id, task.id);
     const rewards = settlements.filter(s => s.success).length;
     const penalties = settlements.filter(s => !s.success).length;
-    const points = settlements.reduce((n, s) => n + (Number(s.pts) || 0), 0);
+    let points = settlements.reduce((n, s) => n + (Number(s.pts) || 0), 0);
+    let d2 = range[0];
+    while(d2 <= end){
+      const rec = db.checkins[d2] && db.checkins[d2].tasks && db.checkins[d2].tasks[task.id];
+      if(rec) points += Number(rec.pts) || 0;
+      d2 = addDays(d2, 1);
+    }
     return {days, rewards, penalties, points, state:'weekly', settlements};
   }
   if(task.mode === 'period'){
@@ -2238,7 +2284,7 @@ function openPlanDetail(planId){
     const sub = t.mode === 'period'
       ? '节点 · 截止 ' + fmtDateTime(t.deadline)
       : t.mode === 'weekly'
-        ? '周期 · 每周 ' + weeklyTargetOf(t) + ' 次 · 达标 +' + pointsForHours(t.estHours) + ' 积分'
+        ? '周期 · 每周 ' + weeklyTargetOf(t) + ' 次 · 每次约 +' + Math.round(pointsForHours(t.estHours) / weeklyTargetOf(t)) + ' 积分'
         : '每日 · 预计 ' + fmtHours(t.estHours) + ' 小时';
     const penaltiesText = t.penalty ? '惩罚：' + esc(penaltyLabel(t)) : '';
     return '<div class="detail-task">' +
@@ -2325,7 +2371,9 @@ function taskEditorRow(t, idx){
   const weekdayOptions = (sel) => WEEKDAY_NAMES.map((n, i) =>
     '<option value="' + (i+1) + '"' + ((i+1) === sel ? ' selected' : '') + '>' + n + '</option>'
   ).join('');
-  const ptsText = (isWeekly ? '达标 +' : '+') + pointsForHours(t.estHours) + ' 积分';
+  const ptsText = isWeekly
+    ? '每次约 +' + Math.round(pointsForHours(t.estHours) / weeklyTargetOf(t)) + ' 积分'
+    : '+' + pointsForHours(t.estHours) + ' 积分';
   return '<div class="task-editor" data-idx="' + idx + '">' +
     '<div class="te-head">' +
       '<div class="te-left"><span class="te-index">' + pad2(idx+1) + '</span>' +
@@ -2339,7 +2387,7 @@ function taskEditorRow(t, idx){
     '<div class="te-grid">' +
       '<div class="field te-wide"><label>预计时长（h）</label><div class="te-hours-row"><input class="input" type="number" min="0" step="0.5" data-ptask="' + idx + '" data-pfield="estHours" value="' + esc(fmtHours(t.estHours) === '0' ? '' : fmtHours(t.estHours)) + '" placeholder="0" inputmode="decimal"><span class="te-pts" id="tePts' + idx + '">' + ptsText + '</span></div></div>' +
       (isWeekly
-        ? '<div class="field te-wide"><label>每周次数</label><div class="te-hours-row"><select class="input" data-ptask="' + idx + '" data-pfield="weeklyTarget">' + countOptions + '</select><span class="te-note">每 7 天为一个周期，达标才获得积分</span></div></div>'
+        ? '<div class="field te-wide"><label>每周次数</label><div class="te-hours-row"><select class="input" data-ptask="' + idx + '" data-pfield="weeklyTarget">' + countOptions + '</select><span class="te-note">每 7 天为一个周期，打一次卡就发一份积分</span></div></div>'
         : '') +
       (isPeriod || isWeekly
         ? '<div class="te-pair">' +
@@ -2355,7 +2403,7 @@ function taskEditorRow(t, idx){
       (isPeriod
         ? (banMode ? '未在截止时间前完成，就会在设定的时间段内禁止做这件事，并在每日日程中标注。' : '在截止时间前完成即算成功，过时未完成会记一次惩罚。')
         : isWeekly
-          ? (banMode ? '从创建日起每 7 天结算一次，打卡未达到设定次数，就在下一周的所选时间段内禁止做这件事，并在每日日程中标注。' : '从创建日起每 7 天结算一次，打卡达到设定次数才算达标并获得积分。')
+          ? (banMode ? '从创建日起每 7 天结算一次，打卡未达到设定次数，就在下一周的所选时间段内禁止做这件事，并在每日日程中标注。' : '从创建日起每 7 天结算一次，积分按打卡次数分期发放，打满即拿满；未达到设定次数算未达标。')
           : '每天都需要打卡，完成后按预计时长获得积分。') +
     '</div>' +
   '</div>';
@@ -3239,7 +3287,8 @@ function pointsLedgerItems(){
       const pts = Number(rec && rec.pts) || 0;
       if(!rec || !pts) return;
       const found = findTask(taskId);
-      items.push({ at: rec.at || date + 'T12:00:00', name: found ? found.task.name : '任务打卡', sub: fmtMD(date) + ' · 任务打卡', pts });
+      const subType = found && found.task.mode === 'weekly' ? '周期打卡' : '任务打卡';
+      items.push({ at: rec.at || date + 'T12:00:00', name: found ? found.task.name : '任务打卡', sub: fmtMD(date) + ' · ' + subType, pts });
     });
     (c.extras || []).forEach(ex => {
       if(!ex.done) return;
@@ -3494,9 +3543,11 @@ function bindEvents(){
       const task = state.planDraft.tasks[idx];
       if(!task) return;
       task[field] = t.value;
-      if(field === 'estHours'){
+      if(field === 'estHours' || field === 'weeklyTarget'){
         const p = document.getElementById('tePts' + idx);
-        if(p) p.textContent = (task.mode === 'weekly' ? '达标 +' : '+') + pointsForHours(t.value) + ' 积分';
+        if(p) p.textContent = (task.mode === 'weekly'
+          ? '每次约 +' + Math.round(pointsForHours(task.estHours) / weeklyTargetOf(task))
+          : '+' + pointsForHours(task.estHours)) + ' 积分';
       }
     }
   };
